@@ -1,0 +1,13 @@
+{
+  "name": "ultra-fighting-evolution-online",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ultra Fighting Evolution: Ultimate - game + online room server (zero dependencies).",
+  "scripts": {
+    "start": "node server.mjs ."
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

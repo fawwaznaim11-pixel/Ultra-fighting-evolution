@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#05070d">
+  <title>Ultra Fighting Evolution: Ultimate</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <canvas id="game" tabindex="-1"></canvas>
+
+  <div id="hud" class="hidden"></div>
+  <div id="screens" class="hidden"></div>
+
+  <!-- PS2-style virtual controller (generic shapes; no console artwork) -->
+  <div id="touch" class="hidden" aria-label="On-screen controller">
+    <div class="pad-left">
+      <div class="shoulders l">
+        <button class="shoulder ult" data-btn="ult">ULT</button>
+        <button class="shoulder" data-btn="l2">L2</button>
+        <button class="shoulder" data-btn="l1">L1</button>
+      </div>
+      <div id="stick-base"><div id="stick-thumb"></div></div>
+    </div>
+    <div class="pad-center">
+      <button class="mini" data-btn="select">SELECT</button>
+      <button class="mini" data-btn="start">START</button>
+    </div>
+    <div class="pad-right">
+      <div class="shoulders r">
+        <button class="shoulder" data-btn="form">FORM</button>
+        <button class="shoulder" data-btn="r2">R2</button>
+        <button class="shoulder" data-btn="r1">R1</button>
+      </div>
+      <div class="face">
+        <button class="fb triangle" data-btn="triangle">△</button>
+        <button class="fb square" data-btn="square">□</button>
+        <button class="fb circle" data-btn="circle">○</button>
+        <button class="fb cross" data-btn="cross">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="rotate-prompt"><div><b>&#8635;</b><p>Rotate your device to landscape to fight.</p></div></div>
+  <div id="toast" role="status"></div>
+  <div id="net-status" class="hidden" role="status"></div>
+  <div id="loading"><div class="loading-box"><h2>ULTRA FIGHTING EVOLUTION</h2><p>Loading&hellip;</p>
+    <noscript>This game needs JavaScript and WebGL2.</noscript></div></div>
+
+  <script src="config.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
