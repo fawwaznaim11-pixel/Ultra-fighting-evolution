@@ -3282,8 +3282,8 @@ define("data/moves", ["require", "exports"], function (require, exports) {
 define("data/characters", ["require", "exports", "data/moves"], function (require, exports, moves_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CHARACTERS = exports.RIBUT = exports.GORRATH = exports.ZEPHYR = exports.SOLARIS = void 0;
-    // All three fighters are ORIGINAL designs. The registry is data-driven, so licensed or fan characters
+    exports.CHARACTERS = exports.VEXIS = exports.WARDEN = exports.NOCTIS = exports.RIBUT = exports.GORRATH = exports.ZEPHYR = exports.SOLARIS = void 0;
+    // All fighters are ORIGINAL designs. The registry is data-driven, so licensed or fan characters
     // can be added later as extra CharacterDef entries without touching the combat engine.
     // ---------------------------------------------------------------- SOLARIS
     // Balanced silver hero with a power timer: strong early, weaker once the timer runs out.
@@ -3775,7 +3775,333 @@ define("data/characters", ["require", "exports", "data/moves"], function (requir
             extras: ['shoulders', 'sword'],
         },
     };
-    exports.CHARACTERS = [exports.SOLARIS, exports.ZEPHYR, exports.GORRATH, exports.RIBUT];
+    // ----------------------------------------------------------------- NOCTIS
+    // Dark rival hero. Slower strings that hit very hard, a vanishing Shadow Step lunge and an Abyss form.
+    const noctisBeam = {
+        name: 'Eclipse Ray',
+        color: [0.65, 0.25, 1],
+        coreColor: [1, 0.85, 1],
+        energyCost: 40,
+        minCharge: 0.7,
+        maxCharge: 1.9,
+        length: 80,
+        width: 4.2,
+        durationMin: 0.8,
+        durationMax: 1.5,
+        tickInterval: 0.12,
+        tickDamageMin: 16,
+        tickDamageMax: 33,
+        recovery: 0.6,
+        aimSpeed: 0.8,
+        hitstun: 0.24,
+        knockback: 6,
+        windup: { shR: 1.3, elR: 1.4, shL: 1.3, elL: 1.4, torsoYaw: 0.5, torsoPitch: -0.15 },
+        strike: { shR: 1.6, elR: 0.05, shL: 0.4, elL: 1.2, torsoYaw: -0.2, torsoPitch: 0.1 },
+    };
+    exports.NOCTIS = {
+        id: 'noctis',
+        name: 'Noctis',
+        title: 'Eclipse Knight',
+        category: 'Original Dark Hero - Power',
+        archetype: 'power',
+        blurb: 'A fallen guardian in black armour. Every strike lands like a hammer, Shadow Step closes any gap, and his Abyss form trades defence for raw power.',
+        stats: {
+            maxHp: 1050, speed: 13, accel: 62, turnRate: 4.6, mass: 120, power: 1.12, defense: 24,
+            maxEnergy: 100, energyRegen: 2.6, maxGuard: 110, jumpSpeed: 23, dodgeSpeed: 36,
+            dodgeTime: 0.28, dodgeInvuln: 0.22, dodgeCooldown: 0.75, radius: 2.3, height: 10.4,
+        },
+        moves: {
+            lights: [
+                (0, moves_js_1.makeAttack)({
+                    id: 'noc-l1', name: 'Gauntlet Hook', startup: 0.14, active: 0.08, recovery: 0.18, damage: 46, reach: 7.2, arc: 80,
+                    hitstun: 0.34, knockback: 6, cancelAt: 0.16, hitstop: 0.05, guardDamage: 10,
+                    windup: { shR: -0.3, elR: 1.5, torsoYaw: 0.45 }, strike: { shR: 1.4, elR: 0.5, torsoYaw: -0.5 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'noc-l2', name: 'Elbow Breaker', startup: 0.16, active: 0.08, recovery: 0.2, damage: 52, reach: 7, arc: 80,
+                    hitstun: 0.36, knockback: 8, cancelAt: 0.18, hitstop: 0.06, guardDamage: 12,
+                    windup: { shL: 0.2, elL: 1.9, torsoYaw: -0.5 }, strike: { shL: 1.3, elL: 1.6, torsoYaw: 0.5 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'noc-l3', name: 'Axe Kick', startup: 0.22, active: 0.1, recovery: 0.34, damage: 74, reach: 8.2, arc: 80,
+                    knockback: 15, knockdown: true, hitstop: 0.1, shake: 0.4, guardDamage: 18,
+                    windup: { hipR: 2.0, knR: 0.2, torsoPitch: -0.25 }, strike: { hipR: 0.2, knR: 0.1, torsoPitch: 0.2 },
+                }),
+            ],
+            heavy: (0, moves_js_1.makeAttack)({
+                id: 'noc-h', name: 'Dusk Hammer', startup: 0.34, active: 0.12, recovery: 0.46, damage: 112, reach: 8.4,
+                arc: 90, hitstun: 0.62, knockback: 20, knockdown: true, armor: 40, hitstop: 0.13, shake: 0.6, guardDamage: 32, cancelAt: 0.38,
+                windup: { shL: 2.8, shR: 2.8, elL: 0.6, elR: 0.6, torsoPitch: -0.35 }, strike: { shL: 0.7, shR: 0.7, elL: 0.2, elR: 0.2, torsoPitch: 0.45 },
+            }),
+            heavyForward: (0, moves_js_1.makeAttack)({
+                id: 'noc-hf', name: 'Rising Eclipse', startup: 0.28, active: 0.1, recovery: 0.48, damage: 80, reach: 8,
+                arc: 70, hitstun: 0.5, knockback: 6, launch: 24, knockdown: true, lungeSpeed: 22, lungeTime: 0.28,
+                hitstop: 0.11, shake: 0.5, guardDamage: 24, cancelAt: 0.32,
+                windup: { shR: -0.4, elR: 1.4, torsoPitch: 0.3, hipL: 0.6, knL: 1.1 }, strike: { shR: 2.9, elR: 0.2, torsoPitch: -0.2 },
+            }),
+            jumpAttack: (0, moves_js_1.makeAttack)({
+                id: 'noc-j', name: 'Meteor Knee', startup: 0.08, active: 0.35, recovery: 0.22, damage: 68, reach: 8.4,
+                arc: 100, yLow: -0.3, yHigh: 1, knockback: 15, knockdown: true, air: true, hitstop: 0.09, shake: 0.35,
+                windup: { hipL: 0.4, knL: 1.6 }, strike: { hipL: 1.5, knL: 1.8, torsoPitch: 0.3, shL: 0.5, shR: 0.5 },
+            }),
+            special: (0, moves_js_1.makeAttack)({
+                id: 'noc-s', name: 'Shadow Step', startup: 0.12, active: 0.22, recovery: 0.5, damage: 84, reach: 8,
+                arc: 70, knockback: 16, knockdown: true, lungeSpeed: 80, lungeTime: 0.26, energyCost: 24, cooldown: 0.7,
+                hitstop: 0.1, shake: 0.4, guardDamage: 22, tracks: true, armor: 30,
+                windup: { shR: -0.8, elR: 1.6, torsoPitch: 0.4, hipL: 0.5 }, strike: { shR: 1.7, elR: 0.1, torsoPitch: 0.45, hipL: 0.7 },
+            }),
+            grab: (0, moves_js_1.makeAttack)({
+                id: 'noc-g', name: 'Void Slam', type: 'throw', startup: 0.26, active: 0.1, recovery: 0.62, damage: 105,
+                throwDamage: 140, reach: 6.4, arc: 80, knockback: 22, knockdown: true, hitstop: 0.13, shake: 0.65,
+                windup: { shL: 1.3, elL: 0.7, shR: 1.3, elR: 0.7 }, strike: { shL: 2.6, elL: 0.3, shR: 2.6, elR: 0.3 },
+            }),
+            beam: noctisBeam,
+            ultimate: {
+                name: 'Umbral Nova', kind: 'shockwave', energyCost: 88, sound: 'quake',
+                color: [0.65, 0.25, 1], coreColor: [1, 0.8, 1],
+                cinematic: { closeUp: 0.65, chargeShake: 0.3, fireShake: 0.9, slowmo: 0.5 },
+                attack: (0, moves_js_1.makeAttack)({
+                    id: 'noc-ult', name: 'Umbral Nova', type: 'aoe', startup: 1.0, active: 0.05, recovery: 0.75, damage: 285, reach: 0,
+                    radius: 22, armor: 70, hitstun: 0.8, knockback: 24, knockdown: true, noScale: true, hitstop: 0.24, shake: 0.9,
+                    guardDamage: 90, energyGain: 0,
+                    windup: { shL: 2.6, shR: 2.6, shLr: 1.0, shRr: 1.0, elL: 0.3, elR: 0.3, torsoPitch: -0.3, headTilt: -0.4, hipL: 0.3, hipR: 0.3, knL: 0.6, knR: 0.6 },
+                    strike: { shL: 0.2, shR: 0.2, shLr: 0.9, shRr: 0.9, torsoPitch: 0.3, hipL: 0.5, hipR: 0.5, knL: 1.0, knR: 1.0 },
+                }),
+            },
+        },
+        ai: { preferredRange: 3.5, aggression: 0.68, caution: 0.35, beamLove: 0.3 },
+        rig: {
+            style: 'hero', bulk: 1.08, headScale: 0.98, metal: 0.6, spec: 1,
+            colors: {
+                body: [0.11, 0.1, 0.15], limb: [0.28, 0.26, 0.34], accent: [0.6, 0.2, 0.95],
+                glow: [0.75, 0.35, 1], eye: [1, 0.22, 0.3], face: [0.2, 0.19, 0.25], fist: [0.16, 0.15, 0.2], boot: [0.16, 0.14, 0.22],
+            },
+            stance: { crouch: 0.12, lean: 0.12, armSpread: 0.35, elbow: 0.9 },
+            extras: ['dark-horns', 'dark-spikes', 'shoulders', 'calf-fins'],
+        },
+        forms: [
+            {
+                id: 'abyss', name: 'Abyss Form', aura: [1, 0.15, 0.3], energyCost: 35, duration: 20, cooldown: 7,
+                windup: 1.2, closeUp: 0.7, burst: 1.2, pitch: 0.75,
+                blurb: 'Lets the darkness take over: far stronger blows and a faster Shadow Step, but his guard cracks easily.',
+                statMul: { power: 1.28, speed: 1.05, defense: 0.7, maxGuard: 0.8 },
+                moves: {
+                    beam: { ...noctisBeam, name: 'Abyss Ray', color: [1, 0.15, 0.3], coreColor: [1, 0.8, 0.8], tickDamageMin: 20, tickDamageMax: 40 },
+                },
+                colors: { body: [0.12, 0.04, 0.06], limb: [0.32, 0.1, 0.14], accent: [1, 0.15, 0.3], glow: [1, 0.25, 0.35] },
+            },
+        ],
+    };
+    // ------------------------------------------------------------------- KX-9
+    // Heavy gunner robot. Rocket fists from range, a long chest laser, armoured charges; slow and very heavy.
+    const wardenBeam = {
+        name: 'Core Laser',
+        color: [1, 0.3, 0.15],
+        coreColor: [1, 0.95, 0.8],
+        energyCost: 45,
+        minCharge: 0.8,
+        maxCharge: 2.2,
+        length: 100,
+        width: 3.2,
+        durationMin: 0.9,
+        durationMax: 1.7,
+        tickInterval: 0.11,
+        tickDamageMin: 16,
+        tickDamageMax: 34,
+        recovery: 0.65,
+        aimSpeed: 0.75,
+        hitstun: 0.24,
+        knockback: 5,
+        windup: { shL: 0.6, shR: 0.6, elL: 1.2, elR: 1.2, torsoPitch: -0.15 },
+        strike: { shL: 0.4, shR: 0.4, elL: 1.3, elR: 1.3, torsoPitch: 0.05 },
+    };
+    exports.WARDEN = {
+        id: 'warden',
+        name: 'KX-9 Warden',
+        title: 'Iron Sentinel',
+        category: 'Original Robot - Heavy Gunner',
+        archetype: 'ranged',
+        blurb: 'A city-defence mech. Fires Rocket Fists from range, sweeps the arena with its Core Laser and shrugs off light hits during heavy attacks. Turns and moves slowly.',
+        stats: {
+            maxHp: 1250, speed: 10.5, accel: 45, turnRate: 2.6, mass: 260, power: 1.08, defense: 36,
+            maxEnergy: 110, energyRegen: 3, maxGuard: 150, jumpSpeed: 19, dodgeSpeed: 30,
+            dodgeTime: 0.32, dodgeInvuln: 0.22, dodgeCooldown: 0.9, radius: 3, height: 11,
+        },
+        moves: {
+            lights: [
+                (0, moves_js_1.makeAttack)({
+                    id: 'kx-l1', name: 'Piston Jab', startup: 0.15, active: 0.08, recovery: 0.2, damage: 44, reach: 7.8, arc: 70,
+                    hitstun: 0.34, knockback: 6, cancelAt: 0.18, hitstop: 0.05, guardDamage: 10,
+                    windup: { shR: -0.3, elR: 1.4, torsoYaw: 0.3 }, strike: { shR: 1.55, elR: 0.05, torsoYaw: -0.3 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'kx-l2', name: 'Hammer Fist', startup: 0.22, active: 0.1, recovery: 0.32, damage: 70, reach: 8.2, arc: 80,
+                    hitstun: 0.45, knockback: 14, knockdown: true, armor: 30, hitstop: 0.09, shake: 0.4, guardDamage: 20,
+                    windup: { shL: 2.7, elL: 0.6, torsoPitch: -0.2 }, strike: { shL: 0.6, elL: 0.1, torsoPitch: 0.35 },
+                }),
+            ],
+            heavy: (0, moves_js_1.makeAttack)({
+                id: 'kx-h', name: 'Drill Smash', startup: 0.38, active: 0.14, recovery: 0.5, damage: 108, reach: 9,
+                arc: 100, hitstun: 0.6, knockback: 20, knockdown: true, armor: 60, hitstop: 0.12, shake: 0.6, guardDamage: 32, cancelAt: 0.42,
+                windup: { shR: 2.6, elR: 0.3, torsoYaw: 0.6, torsoPitch: -0.25 }, strike: { shR: 0.8, elR: 0.05, torsoYaw: -0.7, torsoPitch: 0.4 },
+            }),
+            heavyForward: (0, moves_js_1.makeAttack)({
+                id: 'kx-hf', name: 'Rocket Charge', startup: 0.3, active: 0.24, recovery: 0.55, damage: 92, reach: 8.6,
+                arc: 70, hitstun: 0.5, knockback: 18, knockdown: true, lungeSpeed: 52, lungeTime: 0.36, armor: 70,
+                hitstop: 0.12, shake: 0.55, guardDamage: 30,
+                windup: { shL: -0.5, shR: -0.5, elL: 1.2, elR: 1.2, torsoPitch: 0.35 }, strike: { shL: 0.9, shR: 0.9, elL: 0.4, elR: 0.4, torsoPitch: 0.55 },
+            }),
+            jumpAttack: (0, moves_js_1.makeAttack)({
+                id: 'kx-j', name: 'Thruster Drop', startup: 0.1, active: 0.4, recovery: 0.32, damage: 82, reach: 9,
+                arc: 120, yLow: -0.3, yHigh: 1, knockback: 16, knockdown: true, air: true, hitstop: 0.11, shake: 0.6,
+                windup: { shL: 2.2, shR: 2.2 }, strike: { shL: 0.4, shR: 0.4, torsoPitch: 0.4, hipL: 0.6, hipR: 0.6, knL: 1, knR: 1 },
+            }),
+            special: (0, moves_js_1.makeAttack)({
+                id: 'kx-s', name: 'Rocket Fist', type: 'projectile', startup: 0.32, active: 0.02, recovery: 0.4, damage: 82,
+                reach: 0, energyCost: 18, hitstun: 0.45, knockback: 14, knockdown: true, cooldown: 0.5, hitstop: 0.09,
+                shake: 0.35, guardDamage: 20, energyGain: 3,
+                projectile: { speed: 70, radius: 2.1, life: 1.5, color: [1, 0.55, 0.15], heightFrac: 0.6 },
+                windup: { shR: 1.2, elR: 1.6, torsoYaw: 0.4 }, strike: { shR: 1.6, elR: 0.05, torsoYaw: -0.3 },
+            }),
+            grab: (0, moves_js_1.makeAttack)({
+                id: 'kx-g', name: 'Crusher Grip', type: 'throw', startup: 0.32, active: 0.1, recovery: 0.66, damage: 110,
+                throwDamage: 148, reach: 7.4, arc: 80, knockback: 22, knockdown: true, hitstop: 0.14, shake: 0.7,
+                windup: { shL: 1.3, elL: 0.6, shR: 1.3, elR: 0.6 }, strike: { shL: 2.6, elL: 0.2, shR: 2.6, elR: 0.2 },
+            }),
+            beam: wardenBeam,
+            ultimate: {
+                name: 'Omega Buster', kind: 'projectile', energyCost: 90, sound: 'nova',
+                color: [1, 0.35, 0.12], coreColor: [1, 0.95, 0.7],
+                cinematic: { closeUp: 0.7, chargeShake: 0.3, fireShake: 0.8, slowmo: 0.45 },
+                attack: (0, moves_js_1.makeAttack)({
+                    id: 'kx-ult', name: 'Omega Buster', type: 'projectile', startup: 1.1, active: 0.05, recovery: 0.7,
+                    damage: 290, reach: 0, armor: 70, hitstun: 0.85, knockback: 22, knockdown: true, noScale: true,
+                    hitstop: 0.24, shake: 0.9, guardDamage: 90, energyGain: 0,
+                    projectile: { speed: 60, radius: 6.5, life: 1.8, color: [1, 0.35, 0.12], heightFrac: 0.55 },
+                    windup: { shL: 1.5, shR: 1.5, elL: 0.2, elR: 0.2, torsoPitch: -0.1, hipL: 0.3, hipR: 0.3, knL: 0.5, knR: 0.5 },
+                    strike: { shL: 1.55, shR: 1.55, elL: 0.05, elR: 0.05, torsoPitch: 0.15 },
+                }),
+            },
+        },
+        ai: { preferredRange: 9, aggression: 0.5, caution: 0.35, beamLove: 0.45 },
+        rig: {
+            style: 'robot', bulk: 1.15, headScale: 0.95,
+            colors: {
+                body: [0.46, 0.49, 0.54], limb: [0.55, 0.58, 0.62], accent: [1, 0.7, 0.1],
+                glow: [0.3, 0.9, 1], eye: [1, 0.25, 0.15], joint: [0.17, 0.18, 0.21],
+            },
+            stance: { crouch: 0.14, lean: 0.06, armSpread: 0.45, elbow: 0.7 },
+            extras: ['cannons', 'arm-cannon'],
+        },
+    };
+    // ------------------------------------------------------------------ VEXIS
+    // Alien trickster. Long tendril reach, slow psychic orbs that control space, a fast-tracking mind ray.
+    const vexisBeam = {
+        name: 'Mind Ray',
+        color: [0.4, 1, 0.5],
+        coreColor: [0.95, 1, 0.95],
+        energyCost: 30,
+        minCharge: 0.4,
+        maxCharge: 1.2,
+        length: 75,
+        width: 2.8,
+        durationMin: 0.7,
+        durationMax: 1.2,
+        tickInterval: 0.1,
+        tickDamageMin: 11,
+        tickDamageMax: 24,
+        recovery: 0.4,
+        aimSpeed: 1.7,
+        hitstun: 0.2,
+        knockback: 4,
+        windup: { shL: 1.0, elL: 1.2, shR: 1.0, elR: 1.2, headTilt: -0.3 },
+        strike: { shL: 1.5, elL: 0.3, shR: 1.5, elR: 0.3, headTilt: 0.1 },
+    };
+    exports.VEXIS = {
+        id: 'vexis',
+        name: 'Vexis',
+        title: 'Psionic Invader',
+        category: 'Original Alien - Trickster',
+        archetype: 'ranged',
+        blurb: 'An invader from beyond the stars. Tendril lashes reach further than they look, Psy Orbs drift slowly to control space, and the Mind Ray tracks a dodging target.',
+        stats: {
+            maxHp: 900, speed: 15.5, accel: 80, turnRate: 6.5, mass: 85, power: 0.98, defense: 14,
+            maxEnergy: 110, energyRegen: 3.6, maxGuard: 85, jumpSpeed: 27, dodgeSpeed: 42,
+            dodgeTime: 0.26, dodgeInvuln: 0.22, dodgeCooldown: 0.55, radius: 2, height: 10.2,
+        },
+        moves: {
+            lights: [
+                (0, moves_js_1.makeAttack)({
+                    id: 'vex-l1', name: 'Claw Rake', startup: 0.1, active: 0.08, recovery: 0.14, damage: 30, reach: 7.4, arc: 90,
+                    hitstun: 0.3, knockback: 4, cancelAt: 0.12, hitstop: 0.04, guardDamage: 7,
+                    windup: { shR: 1.6, elR: 1.2, torsoYaw: 0.4 }, strike: { shR: 0.6, elR: 0.3, torsoYaw: -0.4 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'vex-l2', name: 'Cross Rake', startup: 0.1, active: 0.08, recovery: 0.15, damage: 32, reach: 7.4, arc: 90,
+                    hitstun: 0.3, knockback: 5, cancelAt: 0.12, hitstop: 0.04, guardDamage: 7,
+                    windup: { shL: 1.6, elL: 1.2, torsoYaw: -0.4 }, strike: { shL: 0.6, elL: 0.3, torsoYaw: 0.4 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'vex-l3', name: 'Tendril Whip', startup: 0.16, active: 0.1, recovery: 0.3, damage: 56, reach: 10.5, arc: 120,
+                    knockback: 13, knockdown: true, hitstop: 0.08, shake: 0.3, guardDamage: 13,
+                    windup: { shR: 2.4, elR: 0.6, torsoYaw: 0.7 }, strike: { shR: 1.2, elR: 0.05, torsoYaw: -0.9 },
+                }),
+            ],
+            heavy: (0, moves_js_1.makeAttack)({
+                id: 'vex-h', name: 'Tendril Sweep', startup: 0.28, active: 0.14, recovery: 0.42, damage: 86, reach: 11.5,
+                arc: 170, yHigh: 0.5, hitstun: 0.55, knockback: 17, knockdown: true, hitstop: 0.1, shake: 0.45, guardDamage: 24, cancelAt: 0.32,
+                windup: { shL: 1.4, shR: 1.4, shLr: 1.2, shRr: 1.2, torsoYaw: 1 }, strike: { shL: 1.4, shR: 1.4, shLr: 1.2, shRr: 1.2, torsoYaw: -1.2 },
+            }),
+            heavyForward: (0, moves_js_1.makeAttack)({
+                id: 'vex-hf', name: 'Phase Lunge', startup: 0.18, active: 0.16, recovery: 0.45, damage: 70, reach: 8.2,
+                arc: 70, hitstun: 0.48, knockback: 6, launch: 23, knockdown: true, lungeSpeed: 58, lungeTime: 0.26, tracks: true,
+                hitstop: 0.09, shake: 0.35, guardDamage: 18, cancelAt: 0.3,
+                windup: { shL: -0.5, shR: -0.5, elL: 1.4, elR: 1.4, torsoPitch: 0.4 }, strike: { shL: 2.0, shR: 2.0, elL: 0.3, elR: 0.3, torsoPitch: 0.3 },
+            }),
+            jumpAttack: (0, moves_js_1.makeAttack)({
+                id: 'vex-j', name: 'Falling Talon', startup: 0.07, active: 0.32, recovery: 0.18, damage: 54, reach: 8.6,
+                arc: 110, yLow: -0.3, yHigh: 1, knockback: 12, knockdown: true, air: true, hitstop: 0.07, shake: 0.25,
+                windup: { shL: 2.4, shR: 2.4 }, strike: { shL: 0.8, shR: 0.8, torsoPitch: 0.35, hipL: 1.0, knL: 0.3 },
+            }),
+            special: (0, moves_js_1.makeAttack)({
+                id: 'vex-s', name: 'Psy Orb', type: 'projectile', startup: 0.34, active: 0.02, recovery: 0.36, damage: 78,
+                reach: 0, energyCost: 16, hitstun: 0.5, knockback: 10, knockdown: true, cooldown: 0.6, hitstop: 0.08,
+                shake: 0.3, guardDamage: 18, energyGain: 3,
+                projectile: { speed: 38, radius: 2.6, life: 2.6, color: [0.4, 1, 0.5], heightFrac: 0.6 },
+                windup: { shL: 1.4, shR: 1.4, elL: 1.6, elR: 1.6, torsoPitch: -0.1 }, strike: { shL: 1.5, shR: 1.5, elL: 0.2, elR: 0.2, torsoPitch: 0.1 },
+            }),
+            grab: (0, moves_js_1.makeAttack)({
+                id: 'vex-g', name: 'Mind Crush', type: 'throw', startup: 0.22, active: 0.1, recovery: 0.55, damage: 88,
+                throwDamage: 112, reach: 6.2, arc: 80, knockback: 18, knockdown: true, hitstop: 0.11, shake: 0.5,
+                windup: { shL: 1.3, elL: 0.7, shR: 1.3, elR: 0.7, headTilt: -0.3 }, strike: { shL: 2.4, elL: 0.6, shR: 2.4, elR: 0.6, headTilt: 0.2 },
+            }),
+            beam: vexisBeam,
+            ultimate: {
+                name: 'Phantom Rend', kind: 'finisher', energyCost: 82, sound: 'strike',
+                color: [0.4, 1, 0.5], coreColor: [0.95, 1, 0.95],
+                cinematic: { closeUp: 0.65, chargeShake: 0.2, fireShake: 0.5, slowmo: 0.5 },
+                attack: (0, moves_js_1.makeAttack)({
+                    id: 'vex-ult', name: 'Phantom Rend', startup: 0.8, active: 0.55, recovery: 0.7, damage: 52, reach: 9.5, arc: 110,
+                    yHigh: 1, hits: 6, hitstun: 0.35, knockback: 2.5, lungeSpeed: 60, lungeTime: 0.55, lungeStart: 0.8, tracks: true,
+                    armor: 70, guardable: false, noScale: true, hitstop: 0.04, shake: 0.2, guardDamage: 0, energyGain: 2,
+                    finale: { damage: 85, knockback: 22, launch: 20 },
+                    windup: { shL: 2.2, shR: 2.2, elL: 1.0, elR: 1.0, torsoPitch: 0.3, hipL: 0.5, hipR: 0.5, knL: 1.0, knR: 1.0 },
+                    strike: { shL: 0.8, shR: 1.6, elL: 0.2, elR: 0.3, torsoPitch: 0.4, hipL: 0.7, knL: 0.2 },
+                }),
+            },
+        },
+        ai: { preferredRange: 8, aggression: 0.55, caution: 0.5, beamLove: 0.45 },
+        rig: {
+            style: 'alien', bulk: 0.88, headScale: 1.08,
+            colors: {
+                body: [0.08, 0.28, 0.3], limb: [0.16, 0.42, 0.4], accent: [0.82, 0.72, 0.95],
+                glow: [0.4, 1, 0.5], eye: [1, 0.3, 0.85], face: [0.12, 0.36, 0.38],
+            },
+            stance: { crouch: 0.18, lean: 0.18, armSpread: 0.55, elbow: 0.9 },
+            extras: [],
+        },
+    };
+    exports.CHARACTERS = [exports.SOLARIS, exports.ZEPHYR, exports.GORRATH, exports.RIBUT, exports.NOCTIS, exports.WARDEN, exports.VEXIS];
 });
 define("characters/CharacterRegistry", ["require", "exports", "data/characters"], function (require, exports, characters_js_1) {
     "use strict";
@@ -3787,10 +4113,7 @@ define("characters/CharacterRegistry", ["require", "exports", "data/characters"]
         { id: 'slot-new-gen', group: 'New generation heroes', note: 'Planned' },
         { id: 'slot-reiwa', group: 'Reiwa era heroes', note: 'Planned' },
         { id: 'slot-fusion', group: 'Fusion heroes', note: 'Planned' },
-        { id: 'slot-dark', group: 'Dark heroes and rivals', note: 'Planned' },
         { id: 'slot-flying-kaiju', group: 'Flying kaiju', note: 'Planned - needs airborne movement profile' },
-        { id: 'slot-alien', group: 'Alien fighters', note: 'Planned' },
-        { id: 'slot-robot', group: 'Robotic enemies', note: 'Planned' },
         { id: 'slot-boss', group: 'Multi-phase final bosses', note: 'Planned - needs boss phase system' },
     ];
     /** Data registry: add characters without touching combat code. */
@@ -6420,12 +6743,14 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
         const hr = headR;
         const eyeOn = dead ? 0.1 : 1;
         // long swept skull with glowing veins
-        sphereR(ctx, s.body, 0, 0.25 * hr, -0.45 * hr, 0, 0, hr * 0.85, hr * 0.95, hr * 1.55, { p: P.veins, c2: s.glow });
-        sphere(ctx, s.face, 0, -0.15 * hr, 0.35 * hr, hr * 0.68, hr * 0.85, hr * 0.7, { mt: 0.35 });
+        stack.push().translate(0, 0.3 * hr, -0.55 * hr).rotX(-0.35);
+        sphere(ctx, s.body, 0, 0, 0, hr * 0.82, hr * 0.9, hr * 1.25, { p: P.veins, c2: s.glow });
+        stack.pop();
+        sphere(ctx, s.face, 0, -0.18 * hr, 0.12 * hr, hr * 0.6, hr * 0.8, hr * 0.62, { mt: 0.35 });
         // huge black glossy eyes with a glowing iris
         for (const sd of [1, -1]) {
-            sphereR(ctx, [0.02, 0.02, 0.04], sd * 0.36 * hr, 0.05 * hr, 0.72 * hr, sd * 0.55, sd * -0.5, 0.32 * hr, 0.2 * hr, 0.14 * hr, { mt: 1, sp: 2.2 });
-            sphereR(ctx, shade(s.eye, eyeOn), sd * 0.4 * hr, 0.07 * hr, 0.82 * hr, sd * 0.55, sd * -0.5, 0.12 * hr, 0.07 * hr, 0.06 * hr, { e: 2.4 * eyeOn, mt: 0 });
+            sphereR(ctx, [0.02, 0.02, 0.04], sd * 0.3 * hr, 0.02 * hr, 0.6 * hr, sd * 0.55, sd * -0.5, 0.3 * hr, 0.19 * hr, 0.16 * hr, { mt: 1, sp: 2.2 });
+            sphereR(ctx, shade(s.eye, eyeOn), sd * 0.34 * hr, 0.04 * hr, 0.72 * hr, sd * 0.55, sd * -0.5, 0.11 * hr, 0.065 * hr, 0.06 * hr, { e: 1.6 * eyeOn, mt: 0 });
         }
         // mandible plates
         for (const sd of [1, -1])
@@ -6497,7 +6822,7 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
         }
         else {
             sphere(ctx, kaiju ? s.body : s.limb, 0, 0, 0, hipX * (kaiju ? 2.05 : 1.75), 0.06 * H, 0.074 * H * bk, skin);
-            if (!kaiju) {
+            if (!kaiju && !alien) {
                 torus(ctx, s.accent, 0, 0.018 * H, 0, 0.1 * H * bk, 0.11 * H, 0.074 * H * bk, { sp: 1.3 });
                 box(ctx, s.accent, 0, 0.02 * H, 0.083 * H * bk, 0.05 * H, 0.032 * H, 0.016 * H, { sp: 1.5 });
                 sphere(ctx, s.glow, 0, 0.02 * H, 0.092 * H * bk, 0.012 * H, 0.012 * H, 0.006 * H, { e: 1.6 });
@@ -6606,7 +6931,7 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
             shape(ctx, 'torso', s.body, 0, torsoH * 1.0, 0, tw * H * bk, torsoH * 0.95, 0.085 * H * bk, 0, 0, alien ? { p: P.veins, c2: s.glow } : { p: P.suit, c2: s.accent, sp: 1.1 });
             // pecs and abs
             for (const sd of [1, -1])
-                sphereR(ctx, s.body, sd * 0.05 * H * bk, torsoH * 0.78, 0.064 * H * bk, sd * 0.35, 0, 0.062 * H * bk, 0.036 * H, 0.022 * H * bk);
+                boxR(ctx, shade(s.body, 1.04), sd * 0.047 * H * bk, torsoH * 0.79, 0.062 * H * bk, -0.12, sd * 0.32, sd * -0.06, 0.082 * H * bk, 0.052 * H, 0.026 * H * bk, { sp: 1.2 });
             for (let row = 0; row < 3; row++)
                 for (const sd of [1, -1])
                     box(ctx, shade(s.body, 0.97), sd * 0.018 * H * bk, torsoH * (0.56 - row * 0.12), 0.052 * H * bk, 0.028 * H * bk, 0.026 * H, 0.016 * H, { mt: metal * 0.8 });
