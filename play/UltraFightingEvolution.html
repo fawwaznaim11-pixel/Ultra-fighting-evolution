@@ -261,7 +261,16 @@ body.touch-ui #hud-practice { bottom: auto; top: calc(var(--sa-t) + 66px); font-
   height: 56px; display: flex; align-items: center; justify-content: center; position: relative; border-radius: 3px;
   background: radial-gradient(circle at 50% 35%, var(--c3, #345), var(--c1, #123) 70%);
 }
+.card .portrait.img { height: 78px; background-size: cover, cover; background-position: center 30%, center; background-repeat: no-repeat;
+  background-image: var(--img), radial-gradient(circle at 50% 40%, var(--c3, #345), var(--c1, #123) 75%); }
+.card .portrait.img { background-color: #0b1224; }
+.card:hover .portrait.img, .card.sel .portrait.img { filter: brightness(1.15) saturate(1.1); }
 .card .portrait b { font-size: 34px; text-shadow: 0 2px 6px #000; }
+.detail { position: relative; overflow: hidden; }
+.detail .hero-shot { position: absolute; right: -18px; top: 6px; height: 92%; max-height: 330px; opacity: 0.95; pointer-events: none;
+  filter: drop-shadow(0 0 18px var(--c3, #4cf)); z-index: 0; }
+.detail > *:not(.hero-shot) { position: relative; z-index: 1; }
+.detail p, .detail .moves, .detail .stat { max-width: 62%; }
 .card .portrait i { position: absolute; bottom: 1px; right: 3px; font-size: 8px; opacity: 0.7; font-style: normal; }
 .cname { font-weight: 800; font-size: 13px; letter-spacing: 0.06em; }
 .ccat { font-size: 10px; color: var(--dim); }
@@ -414,7 +423,9 @@ kbd { background: rgba(255, 255, 255, 0.12); border: 1px solid var(--line); bord
   .menu .btn.big { width: calc(50% - 6px); }
   .menu .row { width: 100%; }
   .card { min-height: 84px; }
-  .card .portrait { height: 40px; }
+  .card .portrait, .card .portrait.img { height: 48px; }
+  .detail .hero-shot { display: none; }
+  .detail p, .detail .moves, .detail .stat { max-width: none; }
   .detail p { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3770,8 +3781,8 @@ define("data/moves", ["require", "exports"], function (require, exports) {
 define("data/characters", ["require", "exports", "data/moves"], function (require, exports, moves_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CHARACTERS = exports.RIBUT = exports.GORRATH = exports.ZEPHYR = exports.SOLARIS = void 0;
-    // All three fighters are ORIGINAL designs. The registry is data-driven, so licensed or fan characters
+    exports.CHARACTERS = exports.VEXIS = exports.WARDEN = exports.NOCTIS = exports.RIBUT = exports.GORRATH = exports.ZEPHYR = exports.SOLARIS = void 0;
+    // All fighters are ORIGINAL designs. The registry is data-driven, so licensed or fan characters
     // can be added later as extra CharacterDef entries without touching the combat engine.
     // ---------------------------------------------------------------- SOLARIS
     // Balanced silver hero with a power timer: strong early, weaker once the timer runs out.
@@ -4263,7 +4274,333 @@ define("data/characters", ["require", "exports", "data/moves"], function (requir
             extras: ['shoulders', 'sword'],
         },
     };
-    exports.CHARACTERS = [exports.SOLARIS, exports.ZEPHYR, exports.GORRATH, exports.RIBUT];
+    // ----------------------------------------------------------------- NOCTIS
+    // Dark rival hero. Slower strings that hit very hard, a vanishing Shadow Step lunge and an Abyss form.
+    const noctisBeam = {
+        name: 'Eclipse Ray',
+        color: [0.65, 0.25, 1],
+        coreColor: [1, 0.85, 1],
+        energyCost: 40,
+        minCharge: 0.7,
+        maxCharge: 1.9,
+        length: 80,
+        width: 4.2,
+        durationMin: 0.8,
+        durationMax: 1.5,
+        tickInterval: 0.12,
+        tickDamageMin: 16,
+        tickDamageMax: 33,
+        recovery: 0.6,
+        aimSpeed: 0.8,
+        hitstun: 0.24,
+        knockback: 6,
+        windup: { shR: 1.3, elR: 1.4, shL: 1.3, elL: 1.4, torsoYaw: 0.5, torsoPitch: -0.15 },
+        strike: { shR: 1.6, elR: 0.05, shL: 0.4, elL: 1.2, torsoYaw: -0.2, torsoPitch: 0.1 },
+    };
+    exports.NOCTIS = {
+        id: 'noctis',
+        name: 'Noctis',
+        title: 'Eclipse Knight',
+        category: 'Original Dark Hero - Power',
+        archetype: 'power',
+        blurb: 'A fallen guardian in black armour. Every strike lands like a hammer, Shadow Step closes any gap, and his Abyss form trades defence for raw power.',
+        stats: {
+            maxHp: 1050, speed: 13, accel: 62, turnRate: 4.6, mass: 120, power: 1.12, defense: 24,
+            maxEnergy: 100, energyRegen: 2.6, maxGuard: 110, jumpSpeed: 23, dodgeSpeed: 36,
+            dodgeTime: 0.28, dodgeInvuln: 0.22, dodgeCooldown: 0.75, radius: 2.3, height: 10.4,
+        },
+        moves: {
+            lights: [
+                (0, moves_js_1.makeAttack)({
+                    id: 'noc-l1', name: 'Gauntlet Hook', startup: 0.14, active: 0.08, recovery: 0.18, damage: 46, reach: 7.2, arc: 80,
+                    hitstun: 0.34, knockback: 6, cancelAt: 0.16, hitstop: 0.05, guardDamage: 10,
+                    windup: { shR: -0.3, elR: 1.5, torsoYaw: 0.45 }, strike: { shR: 1.4, elR: 0.5, torsoYaw: -0.5 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'noc-l2', name: 'Elbow Breaker', startup: 0.16, active: 0.08, recovery: 0.2, damage: 52, reach: 7, arc: 80,
+                    hitstun: 0.36, knockback: 8, cancelAt: 0.18, hitstop: 0.06, guardDamage: 12,
+                    windup: { shL: 0.2, elL: 1.9, torsoYaw: -0.5 }, strike: { shL: 1.3, elL: 1.6, torsoYaw: 0.5 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'noc-l3', name: 'Axe Kick', startup: 0.22, active: 0.1, recovery: 0.34, damage: 74, reach: 8.2, arc: 80,
+                    knockback: 15, knockdown: true, hitstop: 0.1, shake: 0.4, guardDamage: 18,
+                    windup: { hipR: 2.0, knR: 0.2, torsoPitch: -0.25 }, strike: { hipR: 0.2, knR: 0.1, torsoPitch: 0.2 },
+                }),
+            ],
+            heavy: (0, moves_js_1.makeAttack)({
+                id: 'noc-h', name: 'Dusk Hammer', startup: 0.34, active: 0.12, recovery: 0.46, damage: 112, reach: 8.4,
+                arc: 90, hitstun: 0.62, knockback: 20, knockdown: true, armor: 40, hitstop: 0.13, shake: 0.6, guardDamage: 32, cancelAt: 0.38,
+                windup: { shL: 2.8, shR: 2.8, elL: 0.6, elR: 0.6, torsoPitch: -0.35 }, strike: { shL: 0.7, shR: 0.7, elL: 0.2, elR: 0.2, torsoPitch: 0.45 },
+            }),
+            heavyForward: (0, moves_js_1.makeAttack)({
+                id: 'noc-hf', name: 'Rising Eclipse', startup: 0.28, active: 0.1, recovery: 0.48, damage: 80, reach: 8,
+                arc: 70, hitstun: 0.5, knockback: 6, launch: 24, knockdown: true, lungeSpeed: 22, lungeTime: 0.28,
+                hitstop: 0.11, shake: 0.5, guardDamage: 24, cancelAt: 0.32,
+                windup: { shR: -0.4, elR: 1.4, torsoPitch: 0.3, hipL: 0.6, knL: 1.1 }, strike: { shR: 2.9, elR: 0.2, torsoPitch: -0.2 },
+            }),
+            jumpAttack: (0, moves_js_1.makeAttack)({
+                id: 'noc-j', name: 'Meteor Knee', startup: 0.08, active: 0.35, recovery: 0.22, damage: 68, reach: 8.4,
+                arc: 100, yLow: -0.3, yHigh: 1, knockback: 15, knockdown: true, air: true, hitstop: 0.09, shake: 0.35,
+                windup: { hipL: 0.4, knL: 1.6 }, strike: { hipL: 1.5, knL: 1.8, torsoPitch: 0.3, shL: 0.5, shR: 0.5 },
+            }),
+            special: (0, moves_js_1.makeAttack)({
+                id: 'noc-s', name: 'Shadow Step', startup: 0.12, active: 0.22, recovery: 0.5, damage: 84, reach: 8,
+                arc: 70, knockback: 16, knockdown: true, lungeSpeed: 80, lungeTime: 0.26, energyCost: 24, cooldown: 0.7,
+                hitstop: 0.1, shake: 0.4, guardDamage: 22, tracks: true, armor: 30,
+                windup: { shR: -0.8, elR: 1.6, torsoPitch: 0.4, hipL: 0.5 }, strike: { shR: 1.7, elR: 0.1, torsoPitch: 0.45, hipL: 0.7 },
+            }),
+            grab: (0, moves_js_1.makeAttack)({
+                id: 'noc-g', name: 'Void Slam', type: 'throw', startup: 0.26, active: 0.1, recovery: 0.62, damage: 105,
+                throwDamage: 140, reach: 6.4, arc: 80, knockback: 22, knockdown: true, hitstop: 0.13, shake: 0.65,
+                windup: { shL: 1.3, elL: 0.7, shR: 1.3, elR: 0.7 }, strike: { shL: 2.6, elL: 0.3, shR: 2.6, elR: 0.3 },
+            }),
+            beam: noctisBeam,
+            ultimate: {
+                name: 'Umbral Nova', kind: 'shockwave', energyCost: 88, sound: 'quake',
+                color: [0.65, 0.25, 1], coreColor: [1, 0.8, 1],
+                cinematic: { closeUp: 0.65, chargeShake: 0.3, fireShake: 0.9, slowmo: 0.5 },
+                attack: (0, moves_js_1.makeAttack)({
+                    id: 'noc-ult', name: 'Umbral Nova', type: 'aoe', startup: 1.0, active: 0.05, recovery: 0.75, damage: 285, reach: 0,
+                    radius: 22, armor: 70, hitstun: 0.8, knockback: 24, knockdown: true, noScale: true, hitstop: 0.24, shake: 0.9,
+                    guardDamage: 90, energyGain: 0,
+                    windup: { shL: 2.6, shR: 2.6, shLr: 1.0, shRr: 1.0, elL: 0.3, elR: 0.3, torsoPitch: -0.3, headTilt: -0.4, hipL: 0.3, hipR: 0.3, knL: 0.6, knR: 0.6 },
+                    strike: { shL: 0.2, shR: 0.2, shLr: 0.9, shRr: 0.9, torsoPitch: 0.3, hipL: 0.5, hipR: 0.5, knL: 1.0, knR: 1.0 },
+                }),
+            },
+        },
+        ai: { preferredRange: 3.5, aggression: 0.68, caution: 0.35, beamLove: 0.3 },
+        rig: {
+            style: 'hero', bulk: 1.08, headScale: 0.98, metal: 0.6, spec: 1,
+            colors: {
+                body: [0.11, 0.1, 0.15], limb: [0.28, 0.26, 0.34], accent: [0.6, 0.2, 0.95],
+                glow: [0.75, 0.35, 1], eye: [1, 0.22, 0.3], face: [0.2, 0.19, 0.25], fist: [0.16, 0.15, 0.2], boot: [0.16, 0.14, 0.22],
+            },
+            stance: { crouch: 0.12, lean: 0.12, armSpread: 0.35, elbow: 0.9 },
+            extras: ['dark-horns', 'dark-spikes', 'shoulders', 'calf-fins'],
+        },
+        forms: [
+            {
+                id: 'abyss', name: 'Abyss Form', aura: [1, 0.15, 0.3], energyCost: 35, duration: 20, cooldown: 7,
+                windup: 1.2, closeUp: 0.7, burst: 1.2, pitch: 0.75,
+                blurb: 'Lets the darkness take over: far stronger blows and a faster Shadow Step, but his guard cracks easily.',
+                statMul: { power: 1.28, speed: 1.05, defense: 0.7, maxGuard: 0.8 },
+                moves: {
+                    beam: { ...noctisBeam, name: 'Abyss Ray', color: [1, 0.15, 0.3], coreColor: [1, 0.8, 0.8], tickDamageMin: 20, tickDamageMax: 40 },
+                },
+                colors: { body: [0.12, 0.04, 0.06], limb: [0.32, 0.1, 0.14], accent: [1, 0.15, 0.3], glow: [1, 0.25, 0.35] },
+            },
+        ],
+    };
+    // ------------------------------------------------------------------- KX-9
+    // Heavy gunner robot. Rocket fists from range, a long chest laser, armoured charges; slow and very heavy.
+    const wardenBeam = {
+        name: 'Core Laser',
+        color: [1, 0.3, 0.15],
+        coreColor: [1, 0.95, 0.8],
+        energyCost: 45,
+        minCharge: 0.8,
+        maxCharge: 2.2,
+        length: 100,
+        width: 3.2,
+        durationMin: 0.9,
+        durationMax: 1.7,
+        tickInterval: 0.11,
+        tickDamageMin: 16,
+        tickDamageMax: 34,
+        recovery: 0.65,
+        aimSpeed: 0.75,
+        hitstun: 0.24,
+        knockback: 5,
+        windup: { shL: 0.6, shR: 0.6, elL: 1.2, elR: 1.2, torsoPitch: -0.15 },
+        strike: { shL: 0.4, shR: 0.4, elL: 1.3, elR: 1.3, torsoPitch: 0.05 },
+    };
+    exports.WARDEN = {
+        id: 'warden',
+        name: 'KX-9 Warden',
+        title: 'Iron Sentinel',
+        category: 'Original Robot - Heavy Gunner',
+        archetype: 'ranged',
+        blurb: 'A city-defence mech. Fires Rocket Fists from range, sweeps the arena with its Core Laser and shrugs off light hits during heavy attacks. Turns and moves slowly.',
+        stats: {
+            maxHp: 1250, speed: 10.5, accel: 45, turnRate: 2.6, mass: 260, power: 1.08, defense: 36,
+            maxEnergy: 110, energyRegen: 3, maxGuard: 150, jumpSpeed: 19, dodgeSpeed: 30,
+            dodgeTime: 0.32, dodgeInvuln: 0.22, dodgeCooldown: 0.9, radius: 3, height: 11,
+        },
+        moves: {
+            lights: [
+                (0, moves_js_1.makeAttack)({
+                    id: 'kx-l1', name: 'Piston Jab', startup: 0.15, active: 0.08, recovery: 0.2, damage: 44, reach: 7.8, arc: 70,
+                    hitstun: 0.34, knockback: 6, cancelAt: 0.18, hitstop: 0.05, guardDamage: 10,
+                    windup: { shR: -0.3, elR: 1.4, torsoYaw: 0.3 }, strike: { shR: 1.55, elR: 0.05, torsoYaw: -0.3 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'kx-l2', name: 'Hammer Fist', startup: 0.22, active: 0.1, recovery: 0.32, damage: 70, reach: 8.2, arc: 80,
+                    hitstun: 0.45, knockback: 14, knockdown: true, armor: 30, hitstop: 0.09, shake: 0.4, guardDamage: 20,
+                    windup: { shL: 2.7, elL: 0.6, torsoPitch: -0.2 }, strike: { shL: 0.6, elL: 0.1, torsoPitch: 0.35 },
+                }),
+            ],
+            heavy: (0, moves_js_1.makeAttack)({
+                id: 'kx-h', name: 'Drill Smash', startup: 0.38, active: 0.14, recovery: 0.5, damage: 108, reach: 9,
+                arc: 100, hitstun: 0.6, knockback: 20, knockdown: true, armor: 60, hitstop: 0.12, shake: 0.6, guardDamage: 32, cancelAt: 0.42,
+                windup: { shR: 2.6, elR: 0.3, torsoYaw: 0.6, torsoPitch: -0.25 }, strike: { shR: 0.8, elR: 0.05, torsoYaw: -0.7, torsoPitch: 0.4 },
+            }),
+            heavyForward: (0, moves_js_1.makeAttack)({
+                id: 'kx-hf', name: 'Rocket Charge', startup: 0.3, active: 0.24, recovery: 0.55, damage: 92, reach: 8.6,
+                arc: 70, hitstun: 0.5, knockback: 18, knockdown: true, lungeSpeed: 52, lungeTime: 0.36, armor: 70,
+                hitstop: 0.12, shake: 0.55, guardDamage: 30,
+                windup: { shL: -0.5, shR: -0.5, elL: 1.2, elR: 1.2, torsoPitch: 0.35 }, strike: { shL: 0.9, shR: 0.9, elL: 0.4, elR: 0.4, torsoPitch: 0.55 },
+            }),
+            jumpAttack: (0, moves_js_1.makeAttack)({
+                id: 'kx-j', name: 'Thruster Drop', startup: 0.1, active: 0.4, recovery: 0.32, damage: 82, reach: 9,
+                arc: 120, yLow: -0.3, yHigh: 1, knockback: 16, knockdown: true, air: true, hitstop: 0.11, shake: 0.6,
+                windup: { shL: 2.2, shR: 2.2 }, strike: { shL: 0.4, shR: 0.4, torsoPitch: 0.4, hipL: 0.6, hipR: 0.6, knL: 1, knR: 1 },
+            }),
+            special: (0, moves_js_1.makeAttack)({
+                id: 'kx-s', name: 'Rocket Fist', type: 'projectile', startup: 0.32, active: 0.02, recovery: 0.4, damage: 82,
+                reach: 0, energyCost: 18, hitstun: 0.45, knockback: 14, knockdown: true, cooldown: 0.5, hitstop: 0.09,
+                shake: 0.35, guardDamage: 20, energyGain: 3,
+                projectile: { speed: 70, radius: 2.1, life: 1.5, color: [1, 0.55, 0.15], heightFrac: 0.6 },
+                windup: { shR: 1.2, elR: 1.6, torsoYaw: 0.4 }, strike: { shR: 1.6, elR: 0.05, torsoYaw: -0.3 },
+            }),
+            grab: (0, moves_js_1.makeAttack)({
+                id: 'kx-g', name: 'Crusher Grip', type: 'throw', startup: 0.32, active: 0.1, recovery: 0.66, damage: 110,
+                throwDamage: 148, reach: 7.4, arc: 80, knockback: 22, knockdown: true, hitstop: 0.14, shake: 0.7,
+                windup: { shL: 1.3, elL: 0.6, shR: 1.3, elR: 0.6 }, strike: { shL: 2.6, elL: 0.2, shR: 2.6, elR: 0.2 },
+            }),
+            beam: wardenBeam,
+            ultimate: {
+                name: 'Omega Buster', kind: 'projectile', energyCost: 90, sound: 'nova',
+                color: [1, 0.35, 0.12], coreColor: [1, 0.95, 0.7],
+                cinematic: { closeUp: 0.7, chargeShake: 0.3, fireShake: 0.8, slowmo: 0.45 },
+                attack: (0, moves_js_1.makeAttack)({
+                    id: 'kx-ult', name: 'Omega Buster', type: 'projectile', startup: 1.1, active: 0.05, recovery: 0.7,
+                    damage: 290, reach: 0, armor: 70, hitstun: 0.85, knockback: 22, knockdown: true, noScale: true,
+                    hitstop: 0.24, shake: 0.9, guardDamage: 90, energyGain: 0,
+                    projectile: { speed: 60, radius: 6.5, life: 1.8, color: [1, 0.35, 0.12], heightFrac: 0.55 },
+                    windup: { shL: 1.5, shR: 1.5, elL: 0.2, elR: 0.2, torsoPitch: -0.1, hipL: 0.3, hipR: 0.3, knL: 0.5, knR: 0.5 },
+                    strike: { shL: 1.55, shR: 1.55, elL: 0.05, elR: 0.05, torsoPitch: 0.15 },
+                }),
+            },
+        },
+        ai: { preferredRange: 9, aggression: 0.5, caution: 0.35, beamLove: 0.45 },
+        rig: {
+            style: 'robot', bulk: 1.15, headScale: 0.95,
+            colors: {
+                body: [0.46, 0.49, 0.54], limb: [0.55, 0.58, 0.62], accent: [1, 0.7, 0.1],
+                glow: [0.3, 0.9, 1], eye: [1, 0.25, 0.15], joint: [0.17, 0.18, 0.21],
+            },
+            stance: { crouch: 0.14, lean: 0.06, armSpread: 0.45, elbow: 0.7 },
+            extras: ['cannons', 'arm-cannon'],
+        },
+    };
+    // ------------------------------------------------------------------ VEXIS
+    // Alien trickster. Long tendril reach, slow psychic orbs that control space, a fast-tracking mind ray.
+    const vexisBeam = {
+        name: 'Mind Ray',
+        color: [0.4, 1, 0.5],
+        coreColor: [0.95, 1, 0.95],
+        energyCost: 30,
+        minCharge: 0.4,
+        maxCharge: 1.2,
+        length: 75,
+        width: 2.8,
+        durationMin: 0.7,
+        durationMax: 1.2,
+        tickInterval: 0.1,
+        tickDamageMin: 11,
+        tickDamageMax: 24,
+        recovery: 0.4,
+        aimSpeed: 1.7,
+        hitstun: 0.2,
+        knockback: 4,
+        windup: { shL: 1.0, elL: 1.2, shR: 1.0, elR: 1.2, headTilt: -0.3 },
+        strike: { shL: 1.5, elL: 0.3, shR: 1.5, elR: 0.3, headTilt: 0.1 },
+    };
+    exports.VEXIS = {
+        id: 'vexis',
+        name: 'Vexis',
+        title: 'Psionic Invader',
+        category: 'Original Alien - Trickster',
+        archetype: 'ranged',
+        blurb: 'An invader from beyond the stars. Tendril lashes reach further than they look, Psy Orbs drift slowly to control space, and the Mind Ray tracks a dodging target.',
+        stats: {
+            maxHp: 900, speed: 15.5, accel: 80, turnRate: 6.5, mass: 85, power: 0.98, defense: 14,
+            maxEnergy: 110, energyRegen: 3.6, maxGuard: 85, jumpSpeed: 27, dodgeSpeed: 42,
+            dodgeTime: 0.26, dodgeInvuln: 0.22, dodgeCooldown: 0.55, radius: 2, height: 10.2,
+        },
+        moves: {
+            lights: [
+                (0, moves_js_1.makeAttack)({
+                    id: 'vex-l1', name: 'Claw Rake', startup: 0.1, active: 0.08, recovery: 0.14, damage: 30, reach: 7.4, arc: 90,
+                    hitstun: 0.3, knockback: 4, cancelAt: 0.12, hitstop: 0.04, guardDamage: 7,
+                    windup: { shR: 1.6, elR: 1.2, torsoYaw: 0.4 }, strike: { shR: 0.6, elR: 0.3, torsoYaw: -0.4 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'vex-l2', name: 'Cross Rake', startup: 0.1, active: 0.08, recovery: 0.15, damage: 32, reach: 7.4, arc: 90,
+                    hitstun: 0.3, knockback: 5, cancelAt: 0.12, hitstop: 0.04, guardDamage: 7,
+                    windup: { shL: 1.6, elL: 1.2, torsoYaw: -0.4 }, strike: { shL: 0.6, elL: 0.3, torsoYaw: 0.4 },
+                }),
+                (0, moves_js_1.makeAttack)({
+                    id: 'vex-l3', name: 'Tendril Whip', startup: 0.16, active: 0.1, recovery: 0.3, damage: 56, reach: 10.5, arc: 120,
+                    knockback: 13, knockdown: true, hitstop: 0.08, shake: 0.3, guardDamage: 13,
+                    windup: { shR: 2.4, elR: 0.6, torsoYaw: 0.7 }, strike: { shR: 1.2, elR: 0.05, torsoYaw: -0.9 },
+                }),
+            ],
+            heavy: (0, moves_js_1.makeAttack)({
+                id: 'vex-h', name: 'Tendril Sweep', startup: 0.28, active: 0.14, recovery: 0.42, damage: 86, reach: 11.5,
+                arc: 170, yHigh: 0.5, hitstun: 0.55, knockback: 17, knockdown: true, hitstop: 0.1, shake: 0.45, guardDamage: 24, cancelAt: 0.32,
+                windup: { shL: 1.4, shR: 1.4, shLr: 1.2, shRr: 1.2, torsoYaw: 1 }, strike: { shL: 1.4, shR: 1.4, shLr: 1.2, shRr: 1.2, torsoYaw: -1.2 },
+            }),
+            heavyForward: (0, moves_js_1.makeAttack)({
+                id: 'vex-hf', name: 'Phase Lunge', startup: 0.18, active: 0.16, recovery: 0.45, damage: 70, reach: 8.2,
+                arc: 70, hitstun: 0.48, knockback: 6, launch: 23, knockdown: true, lungeSpeed: 58, lungeTime: 0.26, tracks: true,
+                hitstop: 0.09, shake: 0.35, guardDamage: 18, cancelAt: 0.3,
+                windup: { shL: -0.5, shR: -0.5, elL: 1.4, elR: 1.4, torsoPitch: 0.4 }, strike: { shL: 2.0, shR: 2.0, elL: 0.3, elR: 0.3, torsoPitch: 0.3 },
+            }),
+            jumpAttack: (0, moves_js_1.makeAttack)({
+                id: 'vex-j', name: 'Falling Talon', startup: 0.07, active: 0.32, recovery: 0.18, damage: 54, reach: 8.6,
+                arc: 110, yLow: -0.3, yHigh: 1, knockback: 12, knockdown: true, air: true, hitstop: 0.07, shake: 0.25,
+                windup: { shL: 2.4, shR: 2.4 }, strike: { shL: 0.8, shR: 0.8, torsoPitch: 0.35, hipL: 1.0, knL: 0.3 },
+            }),
+            special: (0, moves_js_1.makeAttack)({
+                id: 'vex-s', name: 'Psy Orb', type: 'projectile', startup: 0.34, active: 0.02, recovery: 0.36, damage: 78,
+                reach: 0, energyCost: 16, hitstun: 0.5, knockback: 10, knockdown: true, cooldown: 0.6, hitstop: 0.08,
+                shake: 0.3, guardDamage: 18, energyGain: 3,
+                projectile: { speed: 38, radius: 2.6, life: 2.6, color: [0.4, 1, 0.5], heightFrac: 0.6 },
+                windup: { shL: 1.4, shR: 1.4, elL: 1.6, elR: 1.6, torsoPitch: -0.1 }, strike: { shL: 1.5, shR: 1.5, elL: 0.2, elR: 0.2, torsoPitch: 0.1 },
+            }),
+            grab: (0, moves_js_1.makeAttack)({
+                id: 'vex-g', name: 'Mind Crush', type: 'throw', startup: 0.22, active: 0.1, recovery: 0.55, damage: 88,
+                throwDamage: 112, reach: 6.2, arc: 80, knockback: 18, knockdown: true, hitstop: 0.11, shake: 0.5,
+                windup: { shL: 1.3, elL: 0.7, shR: 1.3, elR: 0.7, headTilt: -0.3 }, strike: { shL: 2.4, elL: 0.6, shR: 2.4, elR: 0.6, headTilt: 0.2 },
+            }),
+            beam: vexisBeam,
+            ultimate: {
+                name: 'Phantom Rend', kind: 'finisher', energyCost: 82, sound: 'strike',
+                color: [0.4, 1, 0.5], coreColor: [0.95, 1, 0.95],
+                cinematic: { closeUp: 0.65, chargeShake: 0.2, fireShake: 0.5, slowmo: 0.5 },
+                attack: (0, moves_js_1.makeAttack)({
+                    id: 'vex-ult', name: 'Phantom Rend', startup: 0.8, active: 0.55, recovery: 0.7, damage: 52, reach: 9.5, arc: 110,
+                    yHigh: 1, hits: 6, hitstun: 0.35, knockback: 2.5, lungeSpeed: 60, lungeTime: 0.55, lungeStart: 0.8, tracks: true,
+                    armor: 70, guardable: false, noScale: true, hitstop: 0.04, shake: 0.2, guardDamage: 0, energyGain: 2,
+                    finale: { damage: 85, knockback: 22, launch: 20 },
+                    windup: { shL: 2.2, shR: 2.2, elL: 1.0, elR: 1.0, torsoPitch: 0.3, hipL: 0.5, hipR: 0.5, knL: 1.0, knR: 1.0 },
+                    strike: { shL: 0.8, shR: 1.6, elL: 0.2, elR: 0.3, torsoPitch: 0.4, hipL: 0.7, knL: 0.2 },
+                }),
+            },
+        },
+        ai: { preferredRange: 8, aggression: 0.55, caution: 0.5, beamLove: 0.45 },
+        rig: {
+            style: 'alien', bulk: 0.88, headScale: 1.08,
+            colors: {
+                body: [0.08, 0.28, 0.3], limb: [0.16, 0.42, 0.4], accent: [0.82, 0.72, 0.95],
+                glow: [0.4, 1, 0.5], eye: [1, 0.3, 0.85], face: [0.12, 0.36, 0.38],
+            },
+            stance: { crouch: 0.18, lean: 0.18, armSpread: 0.55, elbow: 0.9 },
+            extras: [],
+        },
+    };
+    exports.CHARACTERS = [exports.SOLARIS, exports.ZEPHYR, exports.GORRATH, exports.RIBUT, exports.NOCTIS, exports.WARDEN, exports.VEXIS];
 });
 define("characters/CharacterRegistry", ["require", "exports", "data/characters"], function (require, exports, characters_js_1) {
     "use strict";
@@ -4275,10 +4612,7 @@ define("characters/CharacterRegistry", ["require", "exports", "data/characters"]
         { id: 'slot-new-gen', group: 'New generation heroes', note: 'Planned' },
         { id: 'slot-reiwa', group: 'Reiwa era heroes', note: 'Planned' },
         { id: 'slot-fusion', group: 'Fusion heroes', note: 'Planned' },
-        { id: 'slot-dark', group: 'Dark heroes and rivals', note: 'Planned' },
         { id: 'slot-flying-kaiju', group: 'Flying kaiju', note: 'Planned - needs airborne movement profile' },
-        { id: 'slot-alien', group: 'Alien fighters', note: 'Planned' },
-        { id: 'slot-robot', group: 'Robotic enemies', note: 'Planned' },
         { id: 'slot-boss', group: 'Multi-phase final bosses', note: 'Planned - needs boss phase system' },
     ];
     /** Data registry: add characters without touching combat code. */
@@ -4312,11 +4646,13 @@ define("characters/CharacterRegistry", ["require", "exports", "data/characters"]
 define("render/Renderer", ["require", "exports", "math"], function (require, exports, math_js_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Renderer = exports.newMaterial = void 0;
+    exports.Renderer = exports.newMaterial = exports.PATTERN = void 0;
     exports.resetMaterial = resetMaterial;
+    /** Procedural surface patterns, evaluated in the mesh's local space (see FRAG). */
+    exports.PATTERN = { none: 0, stripes: 1, suit: 2, scales: 3, panels: 4, bands: 5, veins: 6 };
     const newMaterial = () => ({
         color: [1, 1, 1], color2: [0, 0, 0], emissive: [0, 0, 0], rimColor: [0.6, 0.8, 1],
-        alpha: 1, flash: 0, rim: 0, spec: 0, mode: 0, additive: false,
+        alpha: 1, flash: 0, rim: 0, spec: 0, mode: 0, additive: false, pattern: 0, metal: 0,
     });
     exports.newMaterial = newMaterial;
     function resetMaterial(m) {
@@ -4332,6 +4668,8 @@ define("render/Renderer", ["require", "exports", "math"], function (require, exp
         m.spec = 0;
         m.mode = 0;
         m.additive = false;
+        m.pattern = 0;
+        m.metal = 0;
         return m;
     }
     const VERT = `#version 300 es
@@ -4342,27 +4680,65 @@ uniform mat4 uModel;
 uniform mat3 uNormalMat;
 out vec3 vWorld;
 out vec3 vNormal;
+out vec3 vLocal;
 void main(){
   vec4 w = uModel * vec4(aPos, 1.0);
   vWorld = w.xyz;
   vNormal = uNormalMat * aNormal;
+  vLocal = aPos;
   gl_Position = uViewProj * w;
 }`;
     const FRAG = `#version 300 es
 precision highp float;
+precision highp sampler2DShadow;
 in vec3 vWorld;
 in vec3 vNormal;
+in vec3 vLocal;
 uniform vec3 uColor, uColor2, uEmissive, uRimColor;
-uniform vec3 uSunDir, uSunColor, uSkyAmb, uGroundAmb, uCamPos, uFogColor;
+uniform vec3 uSunDir, uSunColor, uSkyAmb, uGroundAmb, uCamPos, uFogColor, uSkyTop, uSkyHor;
 uniform float uFogDensity, uAlpha, uFlash, uRim, uSpec, uMode, uArenaR, uTime, uTheme;
+uniform float uPattern, uMetal, uShadowOn, uShadowTexel;
+uniform mat4 uShadowMat;
+uniform sampler2DShadow uShadowMap;
 out vec4 outColor;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+vec3 hash3(vec3 p){
+  p = vec3(dot(p, vec3(127.1, 311.7, 74.7)), dot(p, vec3(269.5, 183.3, 246.1)), dot(p, vec3(113.5, 271.9, 124.6)));
+  return fract(sin(p) * 43758.5453);
+}
+// Cellular noise: x = distance to nearest cell, y = to second nearest, cell centre in c.
+vec2 voronoi(vec3 p, out vec3 c){
+  vec3 b = floor(p); vec3 f = fract(p);
+  float d1 = 8.0, d2 = 8.0; c = vec3(0.0);
+  for (int k = -1; k <= 1; k++) for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
+    vec3 g = vec3(float(i), float(j), float(k));
+    vec3 o = g + hash3(b + g) * 0.85;
+    float d = length(o - f);
+    if (d < d1) { d2 = d1; d1 = d; c = o - f; } else if (d < d2) { d2 = d; }
+  }
+  return vec2(d1, d2);
+}
+float shadowAt(vec3 P, vec3 N){
+  vec4 s = uShadowMat * vec4(P + N * 0.18, 1.0);
+  vec3 c = s.xyz / s.w * 0.5 + 0.5;
+  if (c.x < 0.0 || c.x > 1.0 || c.y < 0.0 || c.y > 1.0 || c.z > 1.0) return 1.0;
+  float t = uShadowTexel * 1.25;
+  float sum = 0.0;
+  for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++)
+    sum += texture(uShadowMap, vec3(c.xy + vec2(float(i), float(j)) * t, c.z - 0.0008));
+  return sum / 9.0;
+}
+vec3 shoulder(vec3 c){
+  vec3 k = max(c - 0.85, 0.0);
+  return min(c, vec3(0.85)) + 0.3 * (1.0 - exp(-k / 0.3));
+}
 void main(){
   vec3 N = normalize(vNormal);
   vec3 V = normalize(uCamPos - vWorld);
   vec3 base = uColor;
   vec3 emis = uEmissive;
   float dist = length(uCamPos - vWorld);
+  float ao = 1.0;
   vec3 col;
   if (uMode > 2.5 && uMode < 3.5) {
     float f = pow(max(dot(N, V), 0.0), 1.2);
@@ -4370,44 +4746,126 @@ void main(){
   } else if (uMode > 3.5) {
     col = uColor;
   } else {
+    float sh = 1.0;
+    if (uShadowOn > 0.5) sh = shadowAt(vWorld, N);
     if (uMode > 0.5 && uMode < 1.5) {
+      emis = uEmissive * 0.05;
       float r = length(vWorld.xz);
       vec2 g = abs(fract(vWorld.xz / 6.0) - 0.5);
       float line = smoothstep(0.455, 0.5, max(g.x, g.y));
       float inside = 1.0 - smoothstep(uArenaR - 0.5, uArenaR + 0.5, r);
-      base = mix(uColor, uColor2, line * (0.25 + 0.55 * inside));
+      // large paving tiles with subtle per-tile tone, plus fine grit
+      vec2 tile = floor(vWorld.xz / 6.0);
+      float tone = hash(tile) * 0.12 - 0.06;
+      float grit = (hash(floor(vWorld.xz * 3.0)) - 0.5) * 0.05;
+      base = uColor * (1.0 + tone + grit);
+      base = mix(base, uColor2, line * (0.25 + 0.55 * inside));
       base *= mix(0.55, 1.0, inside);
       float ring = smoothstep(uArenaR - 0.9, uArenaR - 0.15, r) * (1.0 - smoothstep(uArenaR - 0.15, uArenaR + 0.25, r));
       emis += uEmissive * ring * (1.2 + 0.4 * sin(uTime * 2.0));
+      // inner energy rings that pulse outward
+      float pulse = fract(r / 14.0 - uTime * 0.15);
+      emis += uEmissive * 0.12 * smoothstep(0.96, 1.0, pulse) * inside;
       if (uTheme > 0.5) {
-        // glowing lava cracks
         vec2 q = vWorld.xz * 0.11;
         float n = abs(sin(q.x * 3.1 + sin(q.y * 2.3) * 1.7) + sin(q.y * 3.7 + sin(q.x * 1.9) * 1.3));
         float crack = smoothstep(0.1, 0.0, n) * (0.4 + 0.6 * smoothstep(uArenaR * 0.55, uArenaR + 6.0, r));
         emis += vec3(1.0, 0.35, 0.05) * crack * (0.8 + 0.3 * sin(uTime * 1.3 + q.x));
       }
     } else if (uMode > 1.5 && uMode < 2.5) {
+      emis = vec3(0.0);
       vec2 w = vec2(vWorld.x + vWorld.z, vWorld.y) / vec2(2.6, 3.2);
       vec2 f = fract(w);
-      float win = step(0.2, f.x) * step(f.x, 0.78) * step(0.3, f.y) * step(f.y, 0.72) * (1.0 - step(0.6, abs(N.y)));
+      float side = 1.0 - step(0.6, abs(N.y));
+      float win = step(0.2, f.x) * step(f.x, 0.78) * step(0.3, f.y) * step(f.y, 0.72) * side;
       float lit = step(0.5, hash(floor(w)));
+      // floor bands every few storeys and a darker base
+      float band = step(0.9, fract(vWorld.y / 9.6)) * side;
+      base = mix(base, base * 0.7, band);
+      base *= mix(0.75, 1.0, smoothstep(0.0, 4.0, vWorld.y));
       base = mix(base, uColor2 * 0.35, win);
       emis += uEmissive * win * lit;
+      // windows reflect the sky a little
+      vec3 R = reflect(-V, N);
+      base += win * mix(uSkyHor, uSkyTop, clamp(R.y, 0.0, 1.0)) * 0.18;
+    } else if (uPattern > 0.5) {
+      vec3 L = vLocal;
+      float p = 0.0;
+      if (uPattern < 1.5) {
+        // racing stripes down both sides of a limb
+        float s = abs(L.x) / max(length(L.xz), 1e-3);
+        p = smoothstep(0.88, 0.92, s);
+      } else if (uPattern < 2.5) {
+        // suit panels: coloured flanks that sweep in to a V on the chest
+        float ax = abs(L.x) / max(length(L.xz), 1e-3);
+        float edge = mix(0.3, 0.8, clamp(-L.y, 0.0, 1.0));
+        p = smoothstep(edge, edge + 0.05, ax);
+        p = max(p, smoothstep(0.035, 0.0, abs(L.x)) * step(0.0, L.z) * step(-0.75, L.y)); // centre seam
+      } else if (uPattern < 3.5) {
+        // reptile scales with creases, raised centres and normal bumps
+        vec3 c;
+        vec2 d = voronoi(L * 7.0, c);
+        float edge = d.y - d.x;
+        float crease = 1.0 - smoothstep(0.0, 0.16, edge);
+        p = smoothstep(0.5, 0.0, d.x) * 0.35;
+        ao = 1.0 - crease * 0.55;
+        N = normalize(N - c * 0.22);
+      } else if (uPattern < 4.5) {
+        // armour panel seams with rivets
+        vec3 g = abs(fract(L * vec3(2.5, 3.0, 2.5)) - 0.5);
+        float seam = smoothstep(0.455, 0.49, max(max(g.x, g.y), g.z));
+        ao = 1.0 - seam * 0.6;
+        vec3 rv = abs(fract(L * vec3(2.5, 3.0, 2.5) + 0.5) - 0.5);
+        p = smoothstep(0.09, 0.05, length(rv.xy)) * 0.8;
+      } else if (uPattern < 5.5) {
+        // horizontal armour bands (belly plates)
+        float b = abs(fract(L.y * 3.5) - 0.5);
+        ao = 1.0 - smoothstep(0.38, 0.5, b) * 0.6;
+        p = smoothstep(0.3, 0.0, b) * 0.3;
+      } else {
+        // glowing energy veins
+        vec3 c;
+        vec2 d = voronoi(L * 4.0, c);
+        float vein = 1.0 - smoothstep(0.0, 0.07, d.y - d.x);
+        emis += uColor2 * vein * (1.2 + 0.5 * sin(uTime * 3.0 + L.y * 6.0));
+        ao = 1.0 - vein * 0.3;
+      }
+      if (uPattern < 5.5) base = mix(base, uColor2, p);
     }
-    float ndl = max(dot(N, uSunDir), 0.0);
+    float ndl = dot(N, uSunDir);
+    float wrap = uPattern > 0.5 || uMetal > 0.0 ? 0.25 : 0.0;
+    float diff = max((ndl + wrap) / (1.0 + wrap), 0.0) * sh;
     vec3 amb = mix(uGroundAmb, uSkyAmb, N.y * 0.5 + 0.5);
-    col = base * (amb + uSunColor * ndl);
-    float rimF = pow(1.0 - max(dot(N, V), 0.0), 3.0) * uRim;
-    col += uRimColor * rimF;
+    float NdV = max(dot(N, V), 0.0);
+    col = base * (amb * ao + uSunColor * diff);
+    if (uMetal > 0.0) {
+      vec3 R = reflect(-V, N);
+      vec3 env = R.y > 0.0 ? mix(uSkyHor, uSkyTop, pow(R.y, 0.6)) : mix(uSkyHor * 0.7, uGroundAmb, clamp(-R.y * 3.0, 0.0, 1.0));
+      float fr = 0.3 + 0.7 * pow(1.0 - NdV, 4.0);
+      col = mix(col, env * mix(vec3(1.0), base, 0.55) * (0.65 + 0.35 * sh) * ao, uMetal * fr * 0.7);
+    }
+    float rimF = pow(1.0 - NdV, 3.0) * uRim;
+    col += uRimColor * rimF * (0.6 + 0.4 * ao);
     vec3 H = normalize(uSunDir + V);
-    col += uSunColor * pow(max(dot(N, H), 0.0), 36.0) * uSpec;
+    float ndh = max(dot(N, H), 0.0);
+    col += uSunColor * (pow(ndh, 64.0) * 1.3 + pow(ndh, 10.0) * 0.12) * uSpec * sh * ao;
     col += emis;
+    col = shoulder(col);
   }
   col = mix(col, vec3(1.0), uFlash);
   float fog = 1.0 - exp(-pow(dist * uFogDensity, 2.0));
   col = mix(col, uFogColor, clamp(fog, 0.0, 1.0) * (uMode > 2.5 && uMode < 3.5 ? 0.35 : 1.0));
   outColor = vec4(col, uAlpha);
 }`;
+    const SHADOW_VERT = `#version 300 es
+layout(location=0) in vec3 aPos;
+uniform mat4 uViewProj;
+uniform mat4 uModel;
+void main(){ gl_Position = uViewProj * uModel * vec4(aPos, 1.0); }`;
+    const SHADOW_FRAG = `#version 300 es
+precision mediump float;
+out vec4 outColor;
+void main(){ outColor = vec4(1.0); }`;
     const SKY_VERT = `#version 300 es
 out vec2 vUv;
 void main(){
@@ -4422,19 +4880,37 @@ uniform vec3 uRight, uUp, uFwd, uTop, uHor, uSunDir, uSunColor;
 uniform float uTan, uAspect, uStars, uTime;
 out vec4 outColor;
 float hash(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
+float n2(vec2 p){
+  vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
+  float a = fract(sin(dot(i, vec2(127.1, 311.7))) * 43758.5453);
+  float b = fract(sin(dot(i + vec2(1, 0), vec2(127.1, 311.7))) * 43758.5453);
+  float c = fract(sin(dot(i + vec2(0, 1), vec2(127.1, 311.7))) * 43758.5453);
+  float d = fract(sin(dot(i + vec2(1, 1), vec2(127.1, 311.7))) * 43758.5453);
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
 void main(){
   vec3 d = normalize(uFwd + uRight * (vUv.x * uAspect * uTan) + uUp * (vUv.y * uTan));
   float t = clamp(d.y * 1.5 + 0.08, 0.0, 1.0);
   vec3 col = mix(uHor, uTop, pow(t, 0.55));
   if (d.y < 0.0) col = mix(uHor, uHor * 0.55, clamp(-d.y * 4.0, 0.0, 1.0));
   float s = max(dot(d, uSunDir), 0.0);
-  col += uSunColor * (pow(s, 600.0) * 2.0 + pow(s, 18.0) * 0.25);
+  col += uSunColor * (pow(s, 600.0) * 2.0 + pow(s, 18.0) * 0.25 + pow(s, 4.0) * 0.06);
+  // drifting cloud layer
+  if (d.y > 0.0) {
+    vec2 cp = d.xz / (d.y + 0.12) * 1.6 + vec2(uTime * 0.02, 0.0);
+    float c = n2(cp) * 0.55 + n2(cp * 2.3) * 0.3 + n2(cp * 5.1) * 0.15;
+    float cover = smoothstep(0.52, 0.85, c) * smoothstep(0.0, 0.18, d.y) * (1.0 - uStars * 0.7);
+    vec3 cloud = mix(uHor * 1.05, vec3(1.0), 0.35) + uSunColor * pow(s, 6.0) * 0.4;
+    col = mix(col, cloud, cover * 0.75);
+  }
   if (uStars > 0.01 && d.y > 0.0) {
     vec3 c = floor(d * 260.0);
     float h = hash(c);
     float star = step(0.9968, h) * (0.5 + 0.5 * sin(uTime * 1.7 + h * 60.0));
     col += vec3(star) * uStars * smoothstep(0.0, 0.25, d.y);
   }
+  vec3 k = max(col - 0.85, 0.0);
+  col = min(col, vec3(0.85)) + 0.3 * (1.0 - exp(-k / 0.3));
   outColor = vec4(col, 1.0);
 }`;
     function compile(gl, type, src) {
@@ -4470,6 +4946,18 @@ void main(){
             out[n] = gl.getUniformLocation(p, n);
         return out;
     }
+    /** Column-major orthographic projection. */
+    function m4Ortho(out, l, r, b, t, n, f) {
+        out.fill(0);
+        out[0] = 2 / (r - l);
+        out[5] = 2 / (t - b);
+        out[10] = -2 / (f - n);
+        out[12] = -(r + l) / (r - l);
+        out[13] = -(t + b) / (t - b);
+        out[14] = -(f + n) / (f - n);
+        out[15] = 1;
+        return out;
+    }
     class Renderer {
         canvas;
         gl;
@@ -4487,6 +4975,17 @@ void main(){
         skyProg;
         skyU;
         skyVao;
+        shadowProg;
+        shadowU;
+        shadowFbo = null;
+        shadowTex = null;
+        shadowSize = 0;
+        /** True while drawing into the shadow map: draw() then only writes depth for opaque geometry. */
+        shadowPass = false;
+        shadowsActive = false;
+        lightView = (0, math_js_6.mat4)();
+        lightProj = (0, math_js_6.mat4)();
+        lightViewProj = (0, math_js_6.mat4)();
         view = (0, math_js_6.mat4)();
         proj = (0, math_js_6.mat4)();
         viewProj = (0, math_js_6.mat4)();
@@ -4495,6 +4994,8 @@ void main(){
         camPos = [0, 0, 0];
         drawCalls = 0;
         isMobile;
+        /** Viewport override used while rendering off-screen (portraits). */
+        target = null;
         constructor(canvas) {
             this.canvas = canvas;
             this.isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -4524,19 +5025,65 @@ void main(){
             this.u = locations(gl, this.prog, [
                 'uViewProj', 'uModel', 'uNormalMat', 'uColor', 'uColor2', 'uEmissive', 'uRimColor', 'uSunDir', 'uSunColor',
                 'uSkyAmb', 'uGroundAmb', 'uCamPos', 'uFogColor', 'uFogDensity', 'uAlpha', 'uFlash', 'uRim', 'uSpec', 'uMode',
-                'uArenaR', 'uTime', 'uTheme',
+                'uArenaR', 'uTime', 'uTheme', 'uPattern', 'uMetal', 'uSkyTop', 'uSkyHor', 'uShadowOn', 'uShadowTexel',
+                'uShadowMat', 'uShadowMap',
             ]);
             this.skyProg = link(gl, SKY_VERT, SKY_FRAG);
             this.skyU = locations(gl, this.skyProg, ['uRight', 'uUp', 'uFwd', 'uTop', 'uHor', 'uSunDir', 'uSunColor', 'uTan', 'uAspect', 'uStars', 'uTime']);
+            this.shadowProg = link(gl, SHADOW_VERT, SHADOW_FRAG);
+            this.shadowU = locations(gl, this.shadowProg, ['uViewProj', 'uModel']);
             const vao = gl.createVertexArray();
             if (!vao)
                 throw new Error('Could not create VAO');
             this.skyVao = vao;
             this.meshes = buildMeshes(gl);
+            this.shadowFbo = null;
+            this.shadowTex = null;
+            this.shadowSize = 0;
+            this.ensureShadowMap(1);
             gl.enable(gl.DEPTH_TEST);
             gl.depthFunc(gl.LEQUAL);
             gl.disable(gl.CULL_FACE);
             this.blendMode = -1;
+        }
+        /** (Re)allocates the sun shadow map. A 1x1 map is kept when shadows are off so the sampler stays valid. */
+        ensureShadowMap(size) {
+            if (this.shadowSize === size && this.shadowTex)
+                return;
+            const gl = this.gl;
+            if (this.shadowTex)
+                gl.deleteTexture(this.shadowTex);
+            if (this.shadowFbo)
+                gl.deleteFramebuffer(this.shadowFbo);
+            const tex = gl.createTexture();
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, size, size, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_MODE, gl.COMPARE_REF_TO_TEXTURE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_FUNC, gl.LEQUAL);
+            const fbo = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, tex, 0);
+            // Clear once so a disabled (1x1) map always reads "lit".
+            gl.clearDepth(1);
+            gl.clear(gl.DEPTH_BUFFER_BIT);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.activeTexture(gl.TEXTURE0);
+            this.shadowTex = tex;
+            this.shadowFbo = fbo;
+            this.shadowSize = size;
+        }
+        /** Shadow-map resolution for the current quality (0 = off). */
+        shadowResolution() {
+            if (this.quality === 'low')
+                return 0;
+            if (this.quality === 'medium')
+                return this.isMobile ? 0 : 1024;
+            return this.isMobile ? 1024 : 2048;
         }
         setQuality(q) {
             this.quality = q;
@@ -4547,7 +5094,6 @@ void main(){
             const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
             const cap = this.quality === 'high' ? 2 : this.quality === 'medium' ? 1.25 : 0.75;
             let r = Math.min(dpr, cap);
-            // Never exceed ~2.1M pixels on low / ~3.7M on medium: keeps phones smooth.
             const maxPixels = this.quality === 'high' ? 6e6 : this.quality === 'medium' ? 3.0e6 : 1.4e6;
             const cssW = this.canvas.clientWidth || 1;
             const cssH = this.canvas.clientHeight || 1;
@@ -4568,6 +5114,47 @@ void main(){
             this.aspect = w / h;
             this.gl.viewport(0, 0, w, h);
         }
+        /**
+         * Starts the sun shadow pass around (cx, cz). Returns false when shadows are off; otherwise draw the casters
+         * with the usual draw() calls and finish with endShadowPass().
+         */
+        beginShadowPass(env, cx, cz, radius) {
+            const size = this.shadowResolution();
+            this.shadowsActive = size > 0;
+            if (!this.shadowsActive) {
+                this.ensureShadowMap(1);
+                return false;
+            }
+            this.ensureShadowMap(size);
+            const gl = this.gl;
+            const d = 120;
+            const sd = env.sunDir;
+            (0, math_js_6.m4LookAt)(this.lightView, cx + sd[0] * d, sd[1] * d, cz + sd[2] * d, cx, 0, cz, 0, 1, 0);
+            m4Ortho(this.lightProj, -radius, radius, -radius, radius, 1, d * 2);
+            (0, math_js_6.m4Mul)(this.lightViewProj, this.lightProj, this.lightView);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.shadowFbo);
+            gl.viewport(0, 0, size, size);
+            gl.disable(gl.BLEND);
+            gl.depthMask(true);
+            gl.colorMask(false, false, false, false);
+            gl.clearDepth(1);
+            gl.clear(gl.DEPTH_BUFFER_BIT);
+            gl.enable(gl.POLYGON_OFFSET_FILL);
+            gl.polygonOffset(2, 3);
+            gl.useProgram(this.shadowProg);
+            gl.uniformMatrix4fv(this.shadowU.uViewProj, false, this.lightViewProj);
+            this.blendMode = 0;
+            this.shadowPass = true;
+            return true;
+        }
+        endShadowPass() {
+            const gl = this.gl;
+            this.shadowPass = false;
+            gl.disable(gl.POLYGON_OFFSET_FILL);
+            gl.colorMask(true, true, true, true);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.target ? this.target.fbo : null);
+            this.blendMode = -1;
+        }
         beginFrame(cam, env, time) {
             const gl = this.gl;
             this.time = time;
@@ -4575,19 +5162,26 @@ void main(){
             this.camPos[0] = cam.eye[0];
             this.camPos[1] = cam.eye[1];
             this.camPos[2] = cam.eye[2];
-            // Camera roll via rotating the up vector.
+            const vw = this.target ? this.target.w : this.width;
+            const vh = this.target ? this.target.h : this.height;
+            const aspect = vw / vh;
             const ux = Math.sin(cam.roll), uy = Math.cos(cam.roll);
             (0, math_js_6.m4LookAt)(this.view, cam.eye[0], cam.eye[1], cam.eye[2], cam.target[0], cam.target[1], cam.target[2], ux, uy, 0);
             this.fovy = cam.fov;
-            (0, math_js_6.m4Perspective)(this.proj, cam.fov, this.aspect, 0.5, 700);
+            (0, math_js_6.m4Perspective)(this.proj, cam.fov, aspect, 0.5, 700);
             (0, math_js_6.m4Mul)(this.viewProj, this.proj, this.view);
-            gl.viewport(0, 0, this.width, this.height);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.target ? this.target.fbo : null);
+            gl.viewport(0, 0, vw, vh);
             gl.depthMask(true);
             gl.disable(gl.BLEND);
             this.blendMode = 0;
-            gl.clearColor(env.fog[0], env.fog[1], env.fog[2], 1);
+            if (this.target && this.target.transparent)
+                gl.clearColor(0, 0, 0, 0);
+            else
+                gl.clearColor(env.fog[0], env.fog[1], env.fog[2], 1);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            this.drawSky(cam, env);
+            if (!(this.target && this.target.transparent))
+                this.drawSky(cam, env, aspect);
             gl.useProgram(this.prog);
             const u = this.u;
             gl.uniformMatrix4fv(u.uViewProj, false, this.viewProj);
@@ -4596,13 +5190,22 @@ void main(){
             gl.uniform3f(u.uSunColor, env.sunColor[0], env.sunColor[1], env.sunColor[2]);
             gl.uniform3f(u.uSkyAmb, env.skyAmbient[0], env.skyAmbient[1], env.skyAmbient[2]);
             gl.uniform3f(u.uGroundAmb, env.groundAmbient[0], env.groundAmbient[1], env.groundAmbient[2]);
+            gl.uniform3f(u.uSkyTop, env.skyTop[0], env.skyTop[1], env.skyTop[2]);
+            gl.uniform3f(u.uSkyHor, env.skyHorizon[0], env.skyHorizon[1], env.skyHorizon[2]);
             gl.uniform3f(u.uFogColor, env.fog[0], env.fog[1], env.fog[2]);
             gl.uniform1f(u.uFogDensity, env.fogDensity);
             gl.uniform1f(u.uArenaR, env.arenaRadius);
             gl.uniform1f(u.uTime, time);
             gl.uniform1f(u.uTheme, env.theme);
+            gl.uniform1f(u.uShadowOn, this.shadowsActive ? 1 : 0);
+            gl.uniform1f(u.uShadowTexel, 1 / Math.max(1, this.shadowSize));
+            gl.uniformMatrix4fv(u.uShadowMat, false, this.lightViewProj);
+            gl.uniform1i(u.uShadowMap, 1);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this.shadowTex);
+            gl.activeTexture(gl.TEXTURE0);
         }
-        drawSky(cam, env) {
+        drawSky(cam, env, aspect = this.aspect) {
             const gl = this.gl;
             let fx = cam.target[0] - cam.eye[0], fy = cam.target[1] - cam.eye[1], fz = cam.target[2] - cam.eye[2];
             const fl = Math.hypot(fx, fy, fz) || 1;
@@ -4610,7 +5213,6 @@ void main(){
             fy /= fl;
             fz /= fl;
             const ux = Math.sin(cam.roll), uy = Math.cos(cam.roll);
-            // right = f x up
             let rx = fy * 0 - fz * uy, ry = fz * ux - fx * 0, rz = fx * uy - fy * ux;
             const rl = Math.hypot(rx, ry, rz) || 1;
             rx /= rl;
@@ -4629,7 +5231,7 @@ void main(){
             gl.uniform3f(s.uSunDir, env.sunDir[0], env.sunDir[1], env.sunDir[2]);
             gl.uniform3f(s.uSunColor, env.sunColor[0], env.sunColor[1], env.sunColor[2]);
             gl.uniform1f(s.uTan, Math.tan(cam.fov / 2));
-            gl.uniform1f(s.uAspect, this.aspect);
+            gl.uniform1f(s.uAspect, aspect);
             gl.uniform1f(s.uStars, env.stars);
             gl.uniform1f(s.uTime, this.time);
             gl.bindVertexArray(this.skyVao);
@@ -4660,6 +5262,14 @@ void main(){
         }
         draw(mesh, model, m) {
             const gl = this.gl;
+            if (this.shadowPass) {
+                if (m.additive || m.alpha < 0.999 || m.mode >= 3)
+                    return;
+                gl.uniformMatrix4fv(this.shadowU.uModel, false, model);
+                gl.bindVertexArray(mesh.vao);
+                gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
+                return;
+            }
             const u = this.u;
             this.setBlend(m.additive ? 2 : m.alpha < 0.999 ? 1 : 0);
             gl.uniformMatrix4fv(u.uModel, false, model);
@@ -4673,18 +5283,85 @@ void main(){
             gl.uniform1f(u.uRim, m.rim);
             gl.uniform1f(u.uSpec, m.spec);
             gl.uniform1f(u.uMode, m.mode);
+            gl.uniform1f(u.uPattern, m.pattern || 0);
+            gl.uniform1f(u.uMetal, m.metal || 0);
             gl.bindVertexArray(mesh.vao);
             gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
             this.drawCalls++;
         }
-        limbMesh(ratio) {
-            const key = Math.round(ratio * 20) / 20;
+        /**
+         * Rounded, slightly muscular limb hanging down from the origin: top radius 1, bottom radius `ratio`, length 1.
+         * `aspect` = radius / length, so the rounded ends stay hemispherical once the limb is scaled.
+         */
+        limbMesh(ratio, aspect = 0.25) {
+            const kr = Math.round(ratio * 20) / 20;
+            const ka = Math.max(0.05, Math.round(aspect * 20) / 20);
+            const key = kr * 100 + ka;
             let m = this.meshes.limb.get(key);
             if (!m) {
-                m = uploadMesh(this.gl, buildLathe(16, 0, 1, -1, key, true));
+                m = uploadMesh(this.gl, buildProfile(20, limbProfile(kr, ka)));
                 this.meshes.limb.set(key, m);
             }
             return m;
+        }
+        /** Cached lathe mesh built from a named profile (see PROFILES). */
+        shape(name) {
+            let m = this.meshes.shapes.get(name);
+            if (!m) {
+                const p = PROFILES[name];
+                if (!p)
+                    throw new Error(`Unknown shape ${name}`);
+                m = uploadMesh(this.gl, buildProfile(p.seg ?? 24, p.pts));
+                this.meshes.shapes.set(name, m);
+            }
+            return m;
+        }
+        /**
+         * Renders a scene into an off-screen buffer and returns it as a 2D canvas (used for character portraits).
+         * `draw` is called after beginFrame with the frame already set up.
+         */
+        renderToCanvas(w, h, cam, env, time, draw, transparent = true) {
+            const gl = this.gl;
+            const fbo = gl.createFramebuffer();
+            const color = gl.createRenderbuffer();
+            const depth = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, color);
+            gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA8, w, h);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, depth);
+            gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, w, h);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, color);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depth);
+            const prevShadows = this.shadowsActive;
+            this.shadowsActive = false;
+            this.target = { fbo, w, h, transparent };
+            const out = document.createElement('canvas');
+            out.width = w;
+            out.height = h;
+            try {
+                this.beginFrame(cam, env, time);
+                draw();
+                const px = new Uint8Array(w * h * 4);
+                gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+                const ctx = out.getContext('2d');
+                const img = ctx.createImageData(w, h);
+                for (let y = 0; y < h; y++) {
+                    const src = (h - 1 - y) * w * 4;
+                    img.data.set(px.subarray(src, src + w * 4), y * w * 4);
+                }
+                ctx.putImageData(img, 0, 0);
+            }
+            finally {
+                this.target = null;
+                this.shadowsActive = prevShadows;
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                gl.deleteFramebuffer(fbo);
+                gl.deleteRenderbuffer(color);
+                gl.deleteRenderbuffer(depth);
+                gl.viewport(0, 0, this.width, this.height);
+                this.blendMode = -1;
+            }
+            return out;
         }
         /** Project a world point to canvas CSS pixels (for DOM overlays). Returns null when behind the camera. */
         project(x, y, z) {
@@ -4748,6 +5425,38 @@ void main(){
                 nor.push(n[0], n[1], n[2]);
             }
             idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+        }
+        return { pos, nor, idx };
+    }
+    /** Unit cube with bevelled (rounded) edges: a superellipsoid. Looks far less "blocky" than buildCube. */
+    function buildRoundBox(seg, e) {
+        const pos = [];
+        const nor = [];
+        const idx = [];
+        const sgn = (v, p) => Math.sign(v) * Math.pow(Math.abs(v), p);
+        for (let i = 0; i <= seg; i++) {
+            const th = (i / seg) * Math.PI - Math.PI / 2;
+            for (let j = 0; j <= seg * 2; j++) {
+                const ph = (j / (seg * 2)) * Math.PI * 2 - Math.PI;
+                const ct = Math.cos(th), st = Math.sin(th), cp = Math.cos(ph), sp = Math.sin(ph);
+                const x = sgn(ct, e) * sgn(cp, e);
+                const y = sgn(st, e);
+                const z = sgn(ct, e) * sgn(sp, e);
+                pos.push(x * 0.5, y * 0.5, z * 0.5);
+                const nx = sgn(ct, 2 - e) * sgn(cp, 2 - e);
+                const ny = sgn(st, 2 - e);
+                const nz = sgn(ct, 2 - e) * sgn(sp, 2 - e);
+                const l = Math.hypot(nx, ny, nz) || 1;
+                nor.push(nx / l, ny / l, nz / l);
+            }
+        }
+        const row = seg * 2 + 1;
+        for (let i = 0; i < seg; i++) {
+            for (let j = 0; j < seg * 2; j++) {
+                const a = i * row + j;
+                const b = a + row;
+                idx.push(a, a + 1, b, b, a + 1, b + 1);
+            }
         }
         return { pos, nor, idx };
     }
@@ -4819,6 +5528,127 @@ void main(){
         }
         return { pos, nor, idx };
     }
+    /**
+     * Smooth lathe through a list of [y, r] points (top to bottom). Normals come from the profile's slope, so
+     * curved silhouettes (muscles, helmets, armour) shade smoothly. A point with r = 0 closes the end.
+     */
+    function buildProfile(seg, pts) {
+        const pos = [];
+        const nor = [];
+        const idx = [];
+        const n = pts.length;
+        for (let i = 0; i < n; i++) {
+            const [y, r] = pts[i];
+            const a = pts[Math.max(0, i - 1)];
+            const b = pts[Math.min(n - 1, i + 1)];
+            // tangent along the profile; the outward normal is perpendicular to it
+            let ty = b[0] - a[0];
+            let tr = b[1] - a[1];
+            if (r < 1e-6) {
+                // pole: normal points along the axis
+                ty = 0;
+                tr = 1;
+            }
+            let nr = -ty;
+            let ny = tr;
+            if (r < 1e-6) {
+                nr = 0;
+                ny = i === 0 ? 1 : -1;
+            }
+            // make sure the normal points outward
+            if (nr < 0 && r >= 1e-6) {
+                nr = -nr;
+                ny = -ny;
+            }
+            const l = Math.hypot(nr, ny) || 1;
+            nr /= l;
+            ny /= l;
+            for (let j = 0; j <= seg; j++) {
+                const ang = (j / seg) * Math.PI * 2;
+                const c = Math.cos(ang), s = Math.sin(ang);
+                pos.push(c * r, y, s * r);
+                nor.push(c * nr, ny, s * nr);
+            }
+        }
+        const row = seg + 1;
+        for (let i = 0; i < n - 1; i++) {
+            for (let j = 0; j < seg; j++) {
+                const a = i * row + j;
+                const b = a + row;
+                idx.push(a, b, a + 1, b, b + 1, a + 1);
+            }
+        }
+        return { pos, nor, idx };
+    }
+    /** Hemispherical cap points from (y0, r) curving to the axis in direction dir (+1 up, -1 down). */
+    function capPts(y0, r, dir, steps = 5) {
+        const out = [];
+        for (let i = 1; i <= steps; i++) {
+            const a = (i / steps) * Math.PI / 2;
+            out.push([y0 + dir * Math.sin(a) * r, Math.cos(a) * r]);
+        }
+        return out;
+    }
+    /** Limb profile: rounded top, muscle bulge in the upper third, taper to `ratio`, rounded bottom. */
+    function limbProfile(ratio, aspect) {
+        const top = capPts(0, 1, 1, 4).reverse().map(([y, r]) => [y * aspect, r]);
+        const body = [];
+        const N = 10;
+        for (let i = 0; i <= N; i++) {
+            const t = i / N;
+            const bulge = Math.sin(Math.min(1, t / 0.75) * Math.PI) * 0.1 * (1 - t * 0.5);
+            body.push([-t, (0, math_js_6.lerp)(1, ratio, t) + bulge]);
+        }
+        const bot = capPts(-1, ratio, -1, 4).map(([y, r]) => [-1 + (y + 1) * aspect, r]);
+        return [[aspect, 0], ...top.slice(1), ...body, ...bot];
+    }
+    function lerpPts(list) {
+        return list;
+    }
+    /** Shapes used by the fighter models. All are unit-sized; the model scales them. */
+    const PROFILES = {
+        // V-tapered torso: broad chest at the top, narrow waist at the bottom (y 0 .. -1)
+        torso: {
+            seg: 28, pts: lerpPts([
+                [0.08, 0], [0.07, 0.42], [0.04, 0.72], [0, 0.9], [-0.08, 1.0], [-0.2, 1.02], [-0.32, 0.98], [-0.45, 0.88],
+                [-0.6, 0.76], [-0.75, 0.7], [-0.88, 0.72], [-0.97, 0.66], [-1.02, 0.4], [-1.04, 0],
+            ]),
+        },
+        // Heavier barrel torso for monsters and robots
+        barrel: {
+            seg: 28, pts: [
+                [0.1, 0], [0.08, 0.5], [0.02, 0.85], [-0.12, 1.0], [-0.35, 1.04], [-0.6, 1.0], [-0.82, 0.92], [-0.96, 0.78],
+                [-1.03, 0.45], [-1.05, 0],
+            ],
+        },
+        // Hero helmet: egg with a slight point at the back of the crown
+        helmet: {
+            seg: 28, pts: [
+                [1.12, 0], [1.1, 0.3], [1.0, 0.62], [0.8, 0.88], [0.5, 1.0], [0.15, 1.0], [-0.2, 0.92], [-0.5, 0.75],
+                [-0.75, 0.52], [-0.9, 0.3], [-0.96, 0],
+            ],
+        },
+        // Pointed fin / horn (closed both ends)
+        spike: {
+            seg: 14, pts: [[1, 0], [0.7, 0.25], [0.35, 0.55], [0, 0.82], [-0.08, 0.6], [-0.1, 0]],
+        },
+        // Boot: flared cuff over the calf
+        boot: {
+            seg: 22, pts: [[0.05, 0], [0.04, 0.9], [0, 1.08], [-0.15, 1.0], [-0.6, 0.92], [-1.0, 1.0], [-1.04, 0.6], [-1.05, 0]],
+        },
+        // Glove / bracer: cuff that widens at the wrist
+        bracer: {
+            seg: 22, pts: [[0.04, 0], [0.03, 0.85], [0, 1.0], [-0.5, 1.05], [-0.85, 1.18], [-1.0, 1.2], [-1.03, 0.7], [-1.04, 0]],
+        },
+        // Shoulder pauldron: dome
+        dome: {
+            seg: 24, pts: [[1, 0], [0.95, 0.35], [0.8, 0.65], [0.55, 0.88], [0.25, 1.0], [0, 1.02], [-0.05, 0.9], [-0.06, 0]],
+        },
+        // Neck: short waisted column
+        neck: {
+            seg: 20, pts: [[0.05, 0], [0.03, 0.9], [0, 1.0], [-0.5, 0.85], [-1.0, 1.05], [-1.04, 0.7], [-1.05, 0]],
+        },
+    };
     function buildDisc(seg) {
         const pos = [0, 0, 0];
         const nor = [0, 1, 0];
@@ -4850,15 +5680,43 @@ void main(){
         }
         return { pos, nor, idx };
     }
+    /** Torus around Y (major radius 1, tube radius `tube`), for belts, rings and halos. */
+    function buildTorus(seg, tubeSeg, tube) {
+        const pos = [];
+        const nor = [];
+        const idx = [];
+        for (let i = 0; i <= seg; i++) {
+            const u = (i / seg) * Math.PI * 2;
+            const cu = Math.cos(u), su = Math.sin(u);
+            for (let j = 0; j <= tubeSeg; j++) {
+                const v = (j / tubeSeg) * Math.PI * 2;
+                const cv = Math.cos(v), sv = Math.sin(v);
+                pos.push((1 + tube * cv) * cu, tube * sv, (1 + tube * cv) * su);
+                nor.push(cv * cu, sv, cv * su);
+            }
+        }
+        const row = tubeSeg + 1;
+        for (let i = 0; i < seg; i++) {
+            for (let j = 0; j < tubeSeg; j++) {
+                const a = i * row + j;
+                const b = a + row;
+                idx.push(a, b, a + 1, b, b + 1, a + 1);
+            }
+        }
+        return { pos, nor, idx };
+    }
     function buildMeshes(gl) {
         return {
             cube: uploadMesh(gl, buildCube()),
-            sphere: uploadMesh(gl, buildSphere(12, 18)),
-            cone: uploadMesh(gl, buildLathe(16, 1, 0, 0, 1, true)),
+            rbox: uploadMesh(gl, buildRoundBox(8, 0.35)),
+            sphere: uploadMesh(gl, buildSphere(20, 32)),
+            cone: uploadMesh(gl, buildLathe(20, 1, 0, 0, 1, true)),
             disc: uploadMesh(gl, buildDisc(64)),
             ring: uploadMesh(gl, buildRing(48, 0.82)),
+            torus: uploadMesh(gl, buildTorus(32, 10, 0.18)),
             beam: uploadMesh(gl, buildLathe(14, 1, 1, 0, 1, true)),
             limb: new Map(),
+            shapes: new Map(),
         };
     }
 });
@@ -5772,6 +6630,7 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
     exports.FighterAnimator = void 0;
     exports.fighterWorldPos = fighterWorldPos;
     exports.drawFighter = drawFighter;
+    exports.renderPortrait = void 0;
     const KEYS = [
         'rootY', 'rootZ', 'rootPitch', 'rootRoll', 'torsoPitch', 'torsoYaw', 'headTilt', 'headYaw',
         'shL', 'shLr', 'elL', 'shR', 'shRr', 'elR', 'hipL', 'knL', 'hipR', 'knR', 'tail', 'jaw',
@@ -6130,71 +6989,118 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
         }
     }
     exports.FighterAnimator = FighterAnimator;
+    // =====================================================================================================
+    // Model drawing. Every fighter is built from smooth lathe shapes, rounded boxes and spheres, shaded with
+    // procedural surface patterns (suit lines, scales, armour panels, energy veins) and metallic reflections.
+    // All designs are original.
+    // =====================================================================================================
     const scratch = (0, Renderer_js_1.newMaterial)();
-    const stack = new math_js_8.MatStack(32);
-    function setCol(m, c, k = 1) {
-        m.color[0] = c[0] * k;
-        m.color[1] = c[1] * k;
-        m.color[2] = c[2] * k;
+    const stack = new math_js_8.MatStack(40);
+    const P = Renderer_js_1.PATTERN;
+    const DEFAULT_LOOK = {
+        hero: { metal: 0.45, spec: 0.85 },
+        speed: { metal: 0.4, spec: 0.9 },
+        kaiju: { metal: 0, spec: 0.3 },
+        robot: { metal: 0.85, spec: 1.1 },
+        alien: { metal: 0.15, spec: 0.7 },
+    };
+    function shade(c, k) {
+        return [c[0] * k, c[1] * k, c[2] * k];
     }
-    function sphere(ctx, c, x, y, z, sx, sy, sz, emissive = 0) {
-        stack.push().translate(x, y, z).scale(sx, sy, sz);
+    function mix3(a, b, t) {
+        return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    }
+    /** Configures the shared material for one part. o: { p pattern, c2 pattern colour, e emissive, ec emissive colour, mt metal, sp spec, rim } */
+    function mat(ctx, c, o) {
         const m = (0, Renderer_js_1.resetMaterial)(ctx.m);
-        setCol(m, c);
+        m.color[0] = c[0];
+        m.color[1] = c[1];
+        m.color[2] = c[2];
         m.flash = ctx.flash;
-        m.rim = ctx.rim;
-        m.spec = ctx.spec;
         m.alpha = ctx.alpha;
-        if (emissive > 0) {
-            m.emissive[0] = c[0] * emissive;
-            m.emissive[1] = c[1] * emissive;
-            m.emissive[2] = c[2] * emissive;
+        m.rim = ctx.rim * (o && o.rim !== undefined ? o.rim : 1);
+        m.spec = ctx.spec * (o && o.sp !== undefined ? o.sp : 1);
+        m.metal = o && o.mt !== undefined ? o.mt : ctx.metal;
+        m.rimColor[0] = ctx.rimColor[0];
+        m.rimColor[1] = ctx.rimColor[1];
+        m.rimColor[2] = ctx.rimColor[2];
+        if (o) {
+            if (o.p) {
+                m.pattern = o.p;
+                const c2 = o.c2 || c;
+                m.color2[0] = c2[0];
+                m.color2[1] = c2[1];
+                m.color2[2] = c2[2];
+            }
+            if (o.e) {
+                const ec = o.ec || c;
+                m.emissive[0] = ec[0] * o.e;
+                m.emissive[1] = ec[1] * o.e;
+                m.emissive[2] = ec[2] * o.e;
+            }
         }
-        ctx.r.draw(ctx.r.meshes.sphere, stack.m, m);
+        return m;
+    }
+    function sphere(ctx, c, x, y, z, sx, sy, sz, o) {
+        stack.push().translate(x, y, z).scale(sx, sy, sz);
+        ctx.r.draw(ctx.r.meshes.sphere, stack.m, mat(ctx, c, o));
         stack.pop();
     }
-    function box(ctx, c, x, y, z, sx, sy, sz, emissive = 0) {
-        stack.push().translate(x, y, z).scale(sx, sy, sz);
-        const m = (0, Renderer_js_1.resetMaterial)(ctx.m);
-        setCol(m, c);
-        m.flash = ctx.flash;
-        m.rim = ctx.rim;
-        m.spec = ctx.spec;
-        m.alpha = ctx.alpha;
-        if (emissive > 0) {
-            m.emissive[0] = c[0] * emissive;
-            m.emissive[1] = c[1] * emissive;
-            m.emissive[2] = c[2] * emissive;
-        }
-        ctx.r.draw(ctx.r.meshes.cube, stack.m, m);
+    /** Sphere with an extra rotation (Y then Z) - for angled eyes and plates. */
+    function sphereR(ctx, c, x, y, z, ry, rz, sx, sy, sz, o) {
+        stack.push().translate(x, y, z).rotY(ry).rotZ(rz).scale(sx, sy, sz);
+        ctx.r.draw(ctx.r.meshes.sphere, stack.m, mat(ctx, c, o));
         stack.pop();
     }
-    /** Tapered cylinder hanging down from the current origin. */
-    function limb(ctx, c, length, rTop, ratio) {
+    /** Rounded box. */
+    function box(ctx, c, x, y, z, sx, sy, sz, o) {
+        stack.push().translate(x, y, z).scale(sx, sy, sz);
+        ctx.r.draw(ctx.r.meshes.rbox, stack.m, mat(ctx, c, o));
+        stack.pop();
+    }
+    function boxR(ctx, c, x, y, z, rx, ry, rz, sx, sy, sz, o) {
+        stack.push().translate(x, y, z).rotY(ry).rotX(rx).rotZ(rz).scale(sx, sy, sz);
+        ctx.r.draw(ctx.r.meshes.rbox, stack.m, mat(ctx, c, o));
+        stack.pop();
+    }
+    /** Named lathe shape (render/Renderer PROFILES), rotated X then Z. */
+    function shape(ctx, name, c, x, y, z, sx, sy, sz, rx, rz, o) {
+        stack.push().translate(x, y, z).rotZ(rz).rotX(rx).scale(sx, sy, sz);
+        ctx.r.draw(ctx.r.shape(name), stack.m, mat(ctx, c, o));
+        stack.pop();
+    }
+    function torus(ctx, c, x, y, z, sx, sy, sz, o) {
+        stack.push().translate(x, y, z).scale(sx, sy, sz);
+        ctx.r.draw(ctx.r.meshes.torus, stack.m, mat(ctx, c, o));
+        stack.pop();
+    }
+    /** Rounded tapered limb hanging down from the current origin. */
+    function limb(ctx, c, length, rTop, ratio, o) {
         stack.push().scale(rTop, length, rTop);
-        const m = (0, Renderer_js_1.resetMaterial)(ctx.m);
-        setCol(m, c);
-        m.flash = ctx.flash;
-        m.rim = ctx.rim;
-        m.spec = ctx.spec;
-        m.alpha = ctx.alpha;
-        ctx.r.draw(ctx.r.limbMesh(ratio), stack.m, m);
+        ctx.r.draw(ctx.r.limbMesh(ratio, rTop / Math.max(0.001, length)), stack.m, mat(ctx, c, o));
         stack.pop();
     }
-    function cone(ctx, c, x, y, z, rx, ry, rotX, rotZ, emissive = 0) {
-        stack.push().translate(x, y, z).rotZ(rotZ).rotX(rotX).scale(rx, ry, rx);
-        const m = (0, Renderer_js_1.resetMaterial)(ctx.m);
-        setCol(m, c);
-        m.flash = ctx.flash;
-        m.rim = ctx.rim * 0.5;
-        m.spec = ctx.spec * 0.5;
-        m.alpha = ctx.alpha;
-        if (emissive > 0) {
-            m.emissive[0] = c[0] * emissive;
-            m.emissive[1] = c[1] * emissive;
-            m.emissive[2] = c[2] * emissive;
+    /** Curved horn / claw / fin: a chain of shrinking spike segments bending by `bend` per segment. */
+    function horn(ctx, c, x, y, z, rx, rz, len, r, segs, bend, o) {
+        stack.push().translate(x, y, z).rotZ(rz).rotX(rx);
+        let rr = r;
+        const sl = len / segs;
+        for (let i = 0; i < segs; i++) {
+            const last = i === segs - 1;
+            if (last) {
+                stack.push().scale(rr, sl * 1.3, rr);
+                ctx.r.draw(ctx.r.shape('spike'), stack.m, mat(ctx, c, o));
+                stack.pop();
+            }
+            else {
+                // limb meshes hang downward, so draw each segment from its far end back to the origin
+                stack.push().translate(0, sl * 1.08, 0).scale(rr, sl * 1.08, rr);
+                ctx.r.draw(ctx.r.limbMesh(0.8, rr / (sl * 1.08)), stack.m, mat(ctx, c, o));
+                stack.pop();
+                stack.translate(0, sl, 0).rotX(bend);
+                rr *= 0.8;
+            }
         }
-        ctx.r.draw(ctx.r.meshes.cone, stack.m, m);
         stack.pop();
     }
     function reach(thigh, shin, hip, knee) {
@@ -6210,18 +7116,177 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
             x: (0, math_js_8.lerp)(f.px, f.x, alpha), y: (0, math_js_8.lerp)(f.py, f.y, alpha), z: (0, math_js_8.lerp)(f.pz, f.z, alpha), yaw: f.pyaw + dy * alpha,
         };
     }
+    // ---------------------------------------------------------------------------------------- body parts
+    function drawHands(ctx, s, H, bk, fist, kaiju) {
+        if (kaiju) {
+            sphere(ctx, s.limb, 0, -0.02 * H, 0, 0.05 * H * bk, 0.05 * H * bk, 0.05 * H * bk, { p: P.scales, c2: s.scaleHi });
+            for (const cx of [-1, 0, 1])
+                horn(ctx, s.claw, cx * 0.026 * H * bk, -0.05 * H, 0.02 * H, Math.PI * 0.85, cx * 0.15, 0.075 * H, 0.012 * H, 3, -0.35, { mt: 0.2, sp: 1.4 });
+            return;
+        }
+        // fist: palm block, knuckle ridge and thumb
+        box(ctx, fist, 0, -0.03 * H, 0.004 * H, 0.05 * H * bk, 0.058 * H * bk, 0.05 * H * bk);
+        box(ctx, shade(fist, 0.92), 0, -0.05 * H, 0.022 * H, 0.052 * H * bk, 0.024 * H * bk, 0.024 * H * bk);
+        sphere(ctx, fist, 0.022 * H * bk, -0.03 * H, 0.022 * H, 0.012 * H, 0.022 * H, 0.012 * H);
+    }
+    function drawHeroHead(ctx, f, rig, s, H, headR, p, dead, time) {
+        const hr = headR;
+        const style = rig.style;
+        const eyeOn = dead ? 0.12 : 1;
+        const eye = shade(s.eye, eyeOn);
+        // helmet + face plate
+        sphere(ctx, s.face, 0, -0.06 * hr, 0.12 * hr, hr * 0.8, hr * 0.9, hr * 0.84, { mt: Math.min(1, ctx.metal + 0.25), sp: 1.3 });
+        shape(ctx, 'helmet', s.body, 0, 0.1 * hr, -0.2 * hr, hr * 0.95, hr * 0.98, hr * 0.92, -0.18, 0, { sp: 1.2 });
+        // brow ridge where the helmet meets the face
+        boxR(ctx, s.body, 0, 0.42 * hr, 0.66 * hr, -0.45, 0, 0, hr * 1.05, hr * 0.14, hr * 0.32);
+        // eyes: large angled glowing lenses
+        const ew = style === 'speed' ? 0.3 : 0.27;
+        const eh = style === 'speed' ? 0.12 : 0.16;
+        for (const sd of [1, -1]) {
+            sphereR(ctx, shade(s.face, 0.35), sd * 0.34 * hr, 0.12 * hr, 0.78 * hr, sd * 0.45, sd * -0.28, ew * hr * 1.18, eh * hr * 1.3, 0.12 * hr, { mt: 0.6, sp: 2 });
+            sphereR(ctx, eye, sd * 0.34 * hr, 0.12 * hr, 0.82 * hr, sd * 0.45, sd * -0.28, ew * hr, eh * hr, 0.12 * hr, { e: 1.25 * eyeOn, sp: 2, mt: 0 });
+        }
+        // mouth slit and cheek lines
+        box(ctx, shade(s.face, 0.45), 0, -0.48 * hr, 0.84 * hr, 0.24 * hr, 0.03 * hr, 0.08 * hr, { mt: 0 });
+        for (const sd of [1, -1])
+            boxR(ctx, s.accent, sd * 0.52 * hr, -0.22 * hr, 0.66 * hr, 0, sd * 0.6, sd * 0.25, 0.04 * hr, 0.42 * hr, 0.08 * hr);
+        // ear pods
+        for (const sd of [1, -1]) {
+            sphere(ctx, s.accent, sd * 0.93 * hr, 0.02 * hr, -0.02 * hr, 0.16 * hr, 0.34 * hr, 0.3 * hr);
+            sphere(ctx, s.glow, sd * 1.03 * hr, 0.02 * hr, -0.02 * hr, 0.05 * hr, 0.14 * hr, 0.12 * hr, { e: 1.2 * eyeOn });
+        }
+        if (rig.extras.includes('crest')) {
+            // a curved fin running over the crown, front to back
+            for (let i = 0; i < 6; i++) {
+                const a = 0.75 - i * 0.42;
+                const y = Math.sin(a + Math.PI / 2) * 1.0 * hr;
+                const z = Math.cos(a + Math.PI / 2) * -1.0 * hr;
+                boxR(ctx, s.accent, 0, y + 0.05 * hr, z - 0.04 * hr, -a, 0, 0, 0.16 * hr, 0.5 * hr - i * 0.02 * hr, 0.5 * hr, { sp: 1.3 });
+            }
+            sphere(ctx, s.glow, 0, 0.62 * hr, 0.8 * hr, 0.09 * hr, 0.12 * hr, 0.08 * hr, { e: 1.8 * eyeOn });
+        }
+        if (rig.extras.includes('fins')) {
+            // swept-back blade fins
+            horn(ctx, s.accent, 0, 0.9 * hr, 0.2 * hr, -1.2, 0, 1.3 * hr, 0.16 * hr, 3, -0.25, { sp: 1.4 });
+            for (const sd of [1, -1])
+                horn(ctx, s.accent, sd * 0.85 * hr, 0.35 * hr, -0.1 * hr, -1.4, sd * -0.5, 1.0 * hr, 0.12 * hr, 3, -0.2, { sp: 1.4 });
+        }
+        if (rig.extras.includes('dark-horns')) {
+            for (const sd of [1, -1])
+                horn(ctx, s.accent, sd * 0.55 * hr, 0.75 * hr, 0.1 * hr, -0.55, sd * -0.55, 1.2 * hr, 0.16 * hr, 4, -0.22, { sp: 1.4 });
+        }
+    }
+    function drawKaijuHead(ctx, f, rig, s, H, headR, p, dead, time) {
+        const hr = headR;
+        const eyeOn = dead ? 0.12 : 1;
+        const sc = { p: P.scales, c2: s.scaleHi };
+        // skull, brow and snout
+        sphere(ctx, s.body, 0, 0.05 * hr, -0.1 * hr, hr * 0.95, hr * 0.92, hr * 1.05, sc);
+        sphere(ctx, s.body, 0, -0.18 * hr, 0.72 * hr, hr * 0.62, hr * 0.46, hr * 0.78, sc);
+        for (const sd of [1, -1]) {
+            boxR(ctx, shade(s.body, 0.85), sd * 0.38 * hr, 0.42 * hr, 0.55 * hr, -0.25, sd * 0.35, sd * -0.2, 0.42 * hr, 0.18 * hr, 0.5 * hr, sc);
+            // nostrils
+            sphere(ctx, [0.05, 0.03, 0.03], sd * 0.16 * hr, -0.05 * hr, 1.42 * hr, 0.06 * hr, 0.04 * hr, 0.04 * hr, { mt: 0 });
+        }
+        // upper teeth
+        for (let i = -3; i <= 3; i++) {
+            const z = 1.3 * hr - Math.abs(i) * 0.12 * hr;
+            shape(ctx, 'spike', s.claw, i * 0.14 * hr, -0.52 * hr, z, 0.045 * hr, 0.16 * hr, 0.045 * hr, Math.PI, 0, { sp: 1.5 });
+        }
+        // jaw (opens while charging / roaring)
+        stack.push().translate(0, -0.5 * hr, 0.25 * hr).rotX(p.jaw);
+        sphere(ctx, s.limb, 0, -0.14 * hr, 0.5 * hr, hr * 0.55, hr * 0.26, hr * 0.78, { p: P.bands, c2: shade(s.limb, 1.2) });
+        for (let i = -3; i <= 3; i++) {
+            const z = 1.0 * hr - Math.abs(i) * 0.12 * hr;
+            shape(ctx, 'spike', s.claw, i * 0.13 * hr, -0.02 * hr, z, 0.04 * hr, 0.13 * hr, 0.04 * hr, 0, 0, { sp: 1.5 });
+        }
+        stack.pop();
+        if (p.jaw > 0.35)
+            sphere(ctx, s.glow, 0, -0.55 * hr, 0.85 * hr, 0.32 * hr, 0.18 * hr, 0.4 * hr, { e: 2.4 * Math.min(1, (p.jaw - 0.35) * 4), mt: 0 });
+        // eyes: small, deep-set and fierce
+        for (const sd of [1, -1]) {
+            sphere(ctx, [0.05, 0.02, 0.02], sd * 0.42 * hr, 0.24 * hr, 0.68 * hr, 0.17 * hr, 0.11 * hr, 0.1 * hr, { mt: 0 });
+            sphereR(ctx, shade(s.eye, eyeOn), sd * 0.43 * hr, 0.25 * hr, 0.74 * hr, sd * 0.4, sd * -0.35, 0.13 * hr, 0.07 * hr, 0.06 * hr, { e: 2.6 * eyeOn, mt: 0 });
+        }
+        if (rig.extras.includes('horns')) {
+            for (const sd of [1, -1]) {
+                horn(ctx, s.claw, sd * 0.55 * hr, 0.6 * hr, -0.2 * hr, -0.9, sd * -0.6, 1.5 * hr, 0.2 * hr, 4, -0.3, { sp: 1.2 });
+                horn(ctx, s.claw, sd * 0.75 * hr, 0.1 * hr, -0.35 * hr, -1.5, sd * -1.0, 0.7 * hr, 0.11 * hr, 3, -0.2, { sp: 1.2 });
+            }
+        }
+        // crown spikes continuing the dorsal row
+        for (let i = 0; i < 3; i++)
+            shape(ctx, 'spike', s.accent, 0, 0.82 * hr - i * 0.1 * hr, -0.35 * hr - i * 0.35 * hr, 0.1 * hr, (0.45 - i * 0.06) * hr, 0.2 * hr, -0.6, 0, { e: 0.35, ec: s.glow });
+    }
+    function drawRobotHead(ctx, f, rig, s, H, headR, p, dead, time) {
+        const hr = headR;
+        const eyeOn = dead ? 0.08 : 1;
+        box(ctx, s.body, 0, 0, 0, hr * 1.7, hr * 1.6, hr * 1.8, { p: P.panels, c2: s.accent });
+        // jaw guard and cheek vents
+        box(ctx, shade(s.body, 0.8), 0, -0.55 * hr, 0.45 * hr, hr * 1.3, hr * 0.55, hr * 0.9, { p: P.panels, c2: s.accent });
+        for (let i = 0; i < 3; i++)
+            box(ctx, [0.05, 0.05, 0.06], 0, -0.48 * hr - i * 0.13 * hr, 0.92 * hr, hr * 0.9, hr * 0.05, hr * 0.04, { mt: 0.3 });
+        // visor band with a scanning light
+        box(ctx, [0.03, 0.03, 0.05], 0, 0.12 * hr, 0.82 * hr, hr * 1.5, hr * 0.38, hr * 0.25, { mt: 1, sp: 2 });
+        const scan = Math.sin(time * 3 + f.index * 2) * 0.5;
+        box(ctx, shade(s.eye, eyeOn), scan * hr, 0.12 * hr, 0.93 * hr, hr * 0.42, hr * 0.16, hr * 0.06, { e: 2.6 * eyeOn, mt: 0 });
+        box(ctx, shade(s.eye, eyeOn * 0.5), 0, 0.12 * hr, 0.92 * hr, hr * 1.3, hr * 0.06, hr * 0.05, { e: 1.2 * eyeOn, mt: 0 });
+        // antenna fins
+        for (const sd of [1, -1]) {
+            horn(ctx, s.accent, sd * 0.8 * hr, 0.6 * hr, -0.2 * hr, -0.5, sd * -0.35, 1.3 * hr, 0.1 * hr, 3, -0.15, { mt: 0.9 });
+            sphere(ctx, s.glow, sd * 0.9 * hr, 0.6 * hr, -0.2 * hr, 0.12 * hr, 0.12 * hr, 0.12 * hr, { e: 1.5 * eyeOn });
+        }
+        box(ctx, s.accent, 0, 0.85 * hr, -0.1 * hr, hr * 0.25, hr * 0.25, hr * 1.4, { mt: 0.9 });
+    }
+    function drawAlienHead(ctx, f, rig, s, H, headR, p, dead, time) {
+        const hr = headR;
+        const eyeOn = dead ? 0.1 : 1;
+        // long swept skull with glowing veins
+        stack.push().translate(0, 0.3 * hr, -0.55 * hr).rotX(-0.35);
+        sphere(ctx, s.body, 0, 0, 0, hr * 0.82, hr * 0.9, hr * 1.25, { p: P.veins, c2: s.glow });
+        stack.pop();
+        sphere(ctx, s.face, 0, -0.18 * hr, 0.12 * hr, hr * 0.6, hr * 0.8, hr * 0.62, { mt: 0.35 });
+        // huge black glossy eyes with a glowing iris
+        for (const sd of [1, -1]) {
+            sphereR(ctx, [0.02, 0.02, 0.04], sd * 0.3 * hr, 0.02 * hr, 0.6 * hr, sd * 0.55, sd * -0.5, 0.3 * hr, 0.19 * hr, 0.16 * hr, { mt: 1, sp: 2.2 });
+            sphereR(ctx, shade(s.eye, eyeOn), sd * 0.34 * hr, 0.04 * hr, 0.72 * hr, sd * 0.55, sd * -0.5, 0.11 * hr, 0.065 * hr, 0.06 * hr, { e: 1.6 * eyeOn, mt: 0 });
+        }
+        // mandible plates
+        for (const sd of [1, -1])
+            horn(ctx, s.accent, sd * 0.22 * hr, -0.6 * hr, 0.6 * hr, 2.6, sd * 0.25, 0.5 * hr, 0.08 * hr, 2, 0.35, { sp: 1.3 });
+        // crown tendrils
+        for (let i = 0; i < 3; i++)
+            horn(ctx, s.accent, (i - 1) * 0.35 * hr, 0.75 * hr, -0.9 * hr, -1.9, (i - 1) * -0.3, 1.1 * hr, 0.1 * hr, 4, 0.18, { e: 0.4, ec: s.glow });
+    }
+    // ---------------------------------------------------------------------------------------- the fighter
     function drawFighter(r, f, anim, alpha, time) {
         const p = anim.pose;
         const rig = f.def.rig;
         const col = rig.colors;
         const H = f.height;
         const bk = rig.bulk;
+        const style = rig.style;
+        const kaiju = style === 'kaiju';
+        const robot = style === 'robot';
+        const alien = style === 'alien';
+        const look = DEFAULT_LOOK[style] || DEFAULT_LOOK.hero;
         const pos = fighterWorldPos(f, alpha);
         const dead = f.state === 'defeated';
-        const ctx = {
-            r, m: scratch, flash: f.flash * 0.75, rim: 0.7, spec: rig.style === 'kaiju' ? 0.25 : 0.7, alpha: 1,
+        // Derived palette
+        const s = {
+            body: col.body, limb: col.limb, accent: col.accent, glow: col.glow, eye: col.eye,
+            face: col.face || mix3(col.limb, [1, 1, 1], 0.25),
+            fist: col.fist || (style === 'speed' ? col.limb : kaiju ? col.limb : col.limb),
+            boot: col.boot || col.accent,
+            claw: col.claw || [0.92, 0.88, 0.76],
+            scaleHi: mix3(col.body, [0.85, 0.8, 0.55], 0.35),
+            joint: col.joint || shade(col.body, 0.55),
         };
-        const legLen = 0.46 * H;
+        const metal = rig.metal !== undefined ? rig.metal : look.metal;
+        const ctx = {
+            r, m: scratch, flash: f.flash * 0.75, rim: kaiju ? 0.55 : 0.75, spec: (rig.spec !== undefined ? rig.spec : look.spec),
+            alpha: 1, metal, rimColor: mix3(col.glow, [1, 1, 1], 0.45),
+        };
         const thigh = 0.25 * H;
         const shin = 0.21 * H;
         const hipX = 0.06 * H * bk;
@@ -6232,34 +7297,49 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
         const fore = 0.14 * H;
         const headR = 0.075 * H * rig.headScale;
         const standing = Math.max(reach(thigh, shin, p.hipL, p.knL), reach(thigh, shin, p.hipR, p.knR));
-        void legLen;
-        // ---- blob shadow
-        {
+        const stripe = kaiju || robot || alien ? undefined : { p: P.stripes, c2: s.accent };
+        const skin = kaiju ? { p: P.scales, c2: s.scaleHi } : robot ? { p: P.panels, c2: s.accent } : alien ? { p: P.veins, c2: s.glow } : stripe;
+        // ---- contact shadow (soft blob; the real shadow comes from the shadow map when enabled)
+        if (!r.shadowPass) {
             const m = (0, Renderer_js_1.resetMaterial)(scratch);
             m.mode = 4;
-            m.alpha = (0, math_js_8.clamp)(0.38 - pos.y * 0.015, 0.1, 0.38);
+            const k = r.shadowsActive ? 0.22 : 0.38;
+            m.alpha = (0, math_js_8.clamp)(k - pos.y * 0.015, 0.06, k);
             m.color[0] = 0;
             m.color[1] = 0;
             m.color[2] = 0;
-            stack.reset().translate(pos.x, 0.06, pos.z).scale(f.radius * 1.5, 1, f.radius * 1.5);
+            stack.reset().translate(pos.x, 0.06, pos.z).scale(f.radius * 1.3, 1, f.radius * 1.3);
             r.draw(r.meshes.disc, stack.m, m);
         }
         stack.reset();
         stack.translate(pos.x, pos.y + p.rootY, pos.z).rotY(pos.yaw).translate(0, 0, p.rootZ).rotX(p.rootPitch).rotZ(p.rootRoll);
         stack.translate(0, standing, 0);
-        // ---- pelvis
-        sphere(ctx, col.body, 0, 0, 0, hipX * 1.9, 0.05 * H, 0.07 * H * bk);
-        if (rig.style !== 'kaiju')
-            box(ctx, col.accent, 0, -0.012 * H, 0, hipX * 3.5, 0.016 * H, 0.1 * H * bk * 0.72);
-        // ---- tail (kaiju)
-        if (rig.extras.includes('tail')) {
-            stack.push().translate(0, 0.0, -0.05 * H * bk).rotX(Math.PI / 2 - 0.45 + p.tail * 0.15).rotY(p.tail * 0.5);
-            let w = 0.055 * H * bk;
-            for (let i = 0; i < 6; i++) {
-                limb(ctx, i % 2 === 0 ? col.body : col.limb, 0.11 * H, w, 0.78);
-                stack.translate(0, -0.11 * H, 0).rotX(-0.1).rotY(p.tail * 0.35);
-                w *= 0.78;
+        // ---- pelvis + belt
+        if (robot) {
+            box(ctx, s.joint, 0, 0, 0, hipX * 3.6, 0.1 * H, 0.15 * H * bk, { p: P.panels, c2: s.accent });
+            box(ctx, s.accent, 0, 0.015 * H, 0.07 * H * bk, 0.08 * H, 0.06 * H, 0.03 * H);
+        }
+        else {
+            sphere(ctx, kaiju ? s.body : s.limb, 0, 0, 0, hipX * (kaiju ? 2.05 : 1.75), 0.06 * H, 0.074 * H * bk, skin);
+            if (!kaiju && !alien) {
+                torus(ctx, s.accent, 0, 0.018 * H, 0, 0.1 * H * bk, 0.11 * H, 0.074 * H * bk, { sp: 1.3 });
+                box(ctx, s.accent, 0, 0.02 * H, 0.083 * H * bk, 0.05 * H, 0.032 * H, 0.016 * H, { sp: 1.5 });
+                sphere(ctx, s.glow, 0, 0.02 * H, 0.092 * H * bk, 0.012 * H, 0.012 * H, 0.006 * H, { e: 1.6 });
             }
+        }
+        // ---- tail (kaiju): long, tapering, scaled, with a spike row
+        if (rig.extras.includes('tail')) {
+            stack.push().translate(0, 0.0, -0.06 * H * bk).rotX(Math.PI / 2 - 0.5 + p.tail * 0.12).rotY(p.tail * 0.45);
+            let w = 0.07 * H * bk;
+            const seg = 0.085 * H;
+            for (let i = 0; i < 10; i++) {
+                limb(ctx, i % 2 === 0 ? s.body : shade(s.body, 0.92), seg * 1.25, w, 0.82, { p: P.scales, c2: s.scaleHi });
+                if (i % 2 === 1 && i < 9)
+                    shape(ctx, 'spike', s.accent, 0, -seg * 0.5, -w * 0.8, w * 0.35, w * 1.6, w * 0.7, -2.0, 0, { e: 0.3, ec: s.glow });
+                stack.translate(0, -seg, 0).rotX(-0.06).rotY(p.tail * 0.22);
+                w *= 0.86;
+            }
+            shape(ctx, 'spike', s.claw, 0, -seg * 0.2, 0, w * 1.2, seg * 0.9, w * 1.2, Math.PI, 0);
             stack.pop();
         }
         // ---- legs
@@ -6267,127 +7347,234 @@ define("render/FighterModel", ["require", "exports", "math", "render/Renderer"],
             const hip = side === 1 ? p.hipL : p.hipR;
             const kn = side === 1 ? p.knL : p.knR;
             stack.push().translate(side * hipX, -0.01 * H, 0).rotX(-hip);
-            limb(ctx, col.limb, thigh, 0.056 * H * bk, 0.7);
+            if (kaiju) {
+                limb(ctx, s.body, thigh, 0.075 * H * bk, 0.62, skin);
+            }
+            else if (robot) {
+                limb(ctx, s.joint, thigh, 0.045 * H * bk, 0.95, { mt: 0.9 });
+                box(ctx, s.body, side * 0.008 * H, -thigh * 0.45, 0.01 * H, 0.1 * H * bk, thigh * 0.7, 0.1 * H * bk, skin);
+            }
+            else {
+                limb(ctx, s.limb, thigh, 0.066 * H * bk, 0.72, skin);
+            }
             stack.translate(0, -thigh, 0);
-            sphere(ctx, col.body, 0, 0, 0, 0.042 * H * bk, 0.042 * H * bk, 0.042 * H * bk);
+            sphere(ctx, robot ? s.joint : kaiju ? s.body : s.limb, 0, 0, 0, 0.045 * H * bk, 0.045 * H * bk, 0.045 * H * bk, robot ? { mt: 0.9 } : skin);
+            if (!kaiju && !alien)
+                shape(ctx, 'dome', robot ? s.accent : s.boot, 0, 0.004 * H, 0.03 * H * bk, 0.04 * H * bk, 0.03 * H, 0.03 * H * bk, Math.PI / 2, 0, { sp: 1.3 });
             stack.rotX(kn);
-            limb(ctx, col.limb, shin, 0.045 * H * bk, 0.72);
-            if (rig.style === 'speed')
-                box(ctx, col.accent, 0, -shin * 0.45, 0.04 * H, 0.012 * H, shin * 0.5, 0.03 * H);
+            if (kaiju) {
+                limb(ctx, s.limb, shin, 0.06 * H * bk, 0.75, skin);
+            }
+            else if (robot) {
+                limb(ctx, s.joint, shin, 0.04 * H * bk, 1, { mt: 0.9 });
+                box(ctx, s.body, 0, -shin * 0.55, 0.008 * H, 0.09 * H * bk, shin * 0.8, 0.095 * H * bk, skin);
+            }
+            else {
+                limb(ctx, s.limb, shin, 0.052 * H * bk, 0.7, skin);
+                if (!alien)
+                    shape(ctx, 'boot', s.boot, 0, -shin * 0.42, 0, 0.05 * H * bk, shin * 0.6, 0.052 * H * bk, 0, 0, { sp: 1.2 });
+            }
+            if (style === 'speed' || rig.extras.includes('calf-fins'))
+                horn(ctx, s.accent, 0, -shin * 0.35, -0.04 * H * bk, -2.5, 0, 0.12 * H, 0.016 * H, 2, -0.2);
             stack.translate(0, -shin, 0);
-            box(ctx, rig.style === 'kaiju' ? col.body : col.accent, 0, 0.01 * H, 0.035 * H, 0.062 * H * bk, 0.03 * H, 0.1 * H * bk);
-            if (rig.style === 'kaiju') {
+            // foot
+            if (kaiju) {
+                box(ctx, s.limb, 0, 0.018 * H, 0.03 * H, 0.085 * H * bk, 0.045 * H, 0.13 * H * bk, skin);
                 for (const cx of [-1, 0, 1])
-                    cone(ctx, [0.9, 0.85, 0.7], cx * 0.02 * H * bk, 0.012 * H, 0.1 * H * bk, 0.012 * H, 0.04 * H, Math.PI / 2, 0);
+                    horn(ctx, s.claw, cx * 0.028 * H * bk, 0.012 * H, 0.09 * H * bk, Math.PI / 2 + 0.15, 0, 0.06 * H, 0.014 * H, 2, 0.3, { sp: 1.3 });
+            }
+            else {
+                const fc = robot ? s.joint : alien ? s.limb : s.boot;
+                box(ctx, fc, 0, 0.012 * H, 0.03 * H, 0.066 * H * bk, 0.04 * H, 0.12 * H * bk, robot ? { p: P.panels, c2: s.accent, mt: 0.9 } : { sp: 1.2 });
+                box(ctx, robot ? s.accent : shade(fc, 0.6), 0, -0.004 * H, 0.03 * H, 0.07 * H * bk, 0.012 * H, 0.125 * H * bk, { mt: 0.2 });
+                if (alien)
+                    for (const cx of [-1, 1])
+                        horn(ctx, s.accent, cx * 0.02 * H, 0.01 * H, 0.08 * H, Math.PI / 2, 0, 0.05 * H, 0.012 * H, 2, 0.2);
             }
             stack.pop();
         }
         // ---- torso group
         stack.push().translate(0, 0.012 * H, 0).rotX(p.torsoPitch).rotY(p.torsoYaw);
-        // waist -> shoulders taper
-        stack.push().translate(0, torsoH * 0.88, 0);
-        limb(ctx, col.body, torsoH * 0.88, 0.1 * H * bk, 0.66);
-        stack.pop();
-        sphere(ctx, col.body, 0, torsoH * 0.74, 0, 0.128 * H * bk, 0.092 * H, 0.088 * H * bk);
-        if (rig.style === 'kaiju') {
+        if (kaiju) {
+            shape(ctx, 'barrel', s.body, 0, torsoH * 1.02, -0.01 * H, 0.14 * H * bk, torsoH * 1.0, 0.11 * H * bk, 0, 0, skin);
             // belly plates
-            for (let i = 0; i < 4; i++) {
-                sphere(ctx, col.limb, 0, torsoH * (0.2 + i * 0.15), 0.07 * H * bk, 0.075 * H * bk, 0.028 * H, 0.03 * H);
+            sphere(ctx, s.limb, 0, torsoH * 0.5, 0.06 * H * bk, 0.09 * H * bk, torsoH * 0.46, 0.06 * H * bk, { p: P.bands, c2: mix3(s.limb, [0.9, 0.8, 0.5], 0.4) });
+            // glowing chest vents when enraged or charging
+            const hot = (f.enraged ? 1 : 0) + (f.state === 'charge' || f.state === 'beam' ? 1 : 0);
+            if (hot > 0)
+                sphere(ctx, s.glow, 0, torsoH * 0.7, 0.04 * H * bk, 0.07 * H * bk, 0.08 * H, 0.05 * H * bk, { p: P.veins, c2: s.glow, e: 0.4 * hot });
+        }
+        else if (robot) {
+            box(ctx, s.body, 0, torsoH * 0.62, 0, 0.27 * H * bk, torsoH * 0.78, 0.17 * H * bk, skin);
+            box(ctx, s.joint, 0, torsoH * 0.18, 0, 0.17 * H * bk, torsoH * 0.35, 0.12 * H * bk, { p: P.bands, c2: s.accent, mt: 0.9 });
+            // reactor core
+            const pulse = 0.8 + 0.4 * Math.sin(time * 4 + f.index);
+            stack.push().translate(0, torsoH * 0.7, 0.085 * H * bk).rotX(Math.PI / 2);
+            torus(ctx, s.accent, 0, 0, 0, 0.042 * H, 0.05 * H, 0.042 * H, { mt: 1 });
+            stack.pop();
+            sphere(ctx, s.glow, 0, torsoH * 0.7, 0.088 * H * bk, 0.03 * H, 0.03 * H, 0.015 * H, { e: 2 * pulse * (dead ? 0.1 : 1), mt: 0 });
+            for (const sd of [1, -1])
+                for (let i = 0; i < 3; i++)
+                    box(ctx, [0.04, 0.04, 0.05], sd * 0.085 * H * bk, torsoH * (0.42 - i * 0.07), 0.087 * H * bk, 0.05 * H, 0.012 * H, 0.01 * H, { mt: 0.3 });
+            // back thrusters
+            for (const sd of [1, -1]) {
+                stack.push().translate(sd * 0.06 * H * bk, torsoH * 0.8, -0.1 * H * bk).rotX(-0.25);
+                limb(ctx, s.joint, 0.14 * H, 0.03 * H, 1.1, { mt: 0.9 });
+                stack.pop();
+                if (f.state === 'jump' || f.state === 'dodge')
+                    sphere(ctx, s.glow, sd * 0.06 * H * bk, torsoH * 0.8 - 0.15 * H, -0.13 * H * bk, 0.025 * H, 0.06 * H, 0.025 * H, { e: 2.5 });
             }
         }
         else {
-            // chest plate in accent colour
-            sphere(ctx, col.accent, 0, torsoH * 0.72, 0.062 * H * bk, 0.082 * H * bk, 0.08 * H, 0.032 * H);
-            if (rig.style === 'hero') {
-                box(ctx, col.accent, 0, torsoH * 0.9, 0.04 * H, 0.2 * H * bk, 0.02 * H, 0.1 * H * bk);
+            const tw = alien ? 0.11 : 0.13;
+            shape(ctx, 'torso', s.body, 0, torsoH * 1.0, 0, tw * H * bk, torsoH * 0.95, 0.085 * H * bk, 0, 0, alien ? { p: P.veins, c2: s.glow } : { p: P.suit, c2: s.accent, sp: 1.1 });
+            // pecs and abs
+            for (const sd of [1, -1])
+                boxR(ctx, shade(s.body, 1.04), sd * 0.047 * H * bk, torsoH * 0.79, 0.062 * H * bk, -0.12, sd * 0.32, sd * -0.06, 0.082 * H * bk, 0.052 * H, 0.026 * H * bk, { sp: 1.2 });
+            for (let row = 0; row < 3; row++)
+                for (const sd of [1, -1])
+                    box(ctx, shade(s.body, 0.97), sd * 0.018 * H * bk, torsoH * (0.56 - row * 0.12), 0.052 * H * bk, 0.028 * H * bk, 0.026 * H, 0.016 * H, { mt: metal * 0.8 });
+            if (style === 'hero' && !rig.extras.includes('no-collar')) {
+                // shoulder protector that frames the chest
+                for (const sd of [1, -1])
+                    boxR(ctx, s.accent, sd * 0.065 * H * bk, torsoH * 0.93, 0.03 * H * bk, -0.25, sd * -0.15, sd * 0.25, 0.1 * H * bk, 0.022 * H, 0.1 * H * bk, { sp: 1.3 });
             }
+            if (rig.extras.includes('dark-spikes'))
+                for (const sd of [1, -1])
+                    horn(ctx, s.accent, sd * 0.05 * H, torsoH * 0.9, -0.06 * H * bk, -0.9, sd * -0.5, 0.16 * H, 0.02 * H, 3, -0.2);
+            if (alien)
+                for (let i = 0; i < 4; i++)
+                    horn(ctx, s.accent, 0, torsoH * (0.85 - i * 0.18), -0.07 * H * bk, -1.1, 0, (0.14 - i * 0.02) * H, 0.018 * H, 3, -0.15, { e: 0.3, ec: s.glow });
         }
         if (rig.extras.includes('timer')) {
             // Colour timer: blue while healthy, blinking red once the timer has run out.
             const warn = f.timerExpired || (f.def.timer ? f.timerLeft / f.def.timer.seconds < 0.2 : false);
             const blink = warn ? (Math.sin(time * 12) > 0 ? 1 : 0.15) : 1;
             const c = warn ? [1, 0.12, 0.08] : [0.3, 0.8, 1];
-            sphere(ctx, [c[0] * blink, c[1] * blink, c[2] * blink], 0, torsoH * 0.7, 0.092 * H * bk, 0.022 * H, 0.022 * H, 0.016 * H, 1.6);
+            stack.push().translate(0, torsoH * 0.72, 0.088 * H * bk).rotX(Math.PI / 2);
+            torus(ctx, s.accent, 0, 0, 0, 0.026 * H, 0.04 * H, 0.026 * H, { mt: 1, sp: 1.5 });
+            stack.pop();
+            sphere(ctx, shade(c, blink), 0, torsoH * 0.72, 0.09 * H * bk, 0.022 * H, 0.022 * H, 0.014 * H, { e: 2.2, mt: 0 });
         }
         if (rig.extras.includes('spikes')) {
-            for (let i = 0; i < 5; i++) {
-                const y = torsoH * (0.25 + i * 0.16);
-                cone(ctx, col.accent, 0, y, -0.088 * H * bk, 0.03 * H * bk, (0.09 - i * 0.008) * H, -0.9, 0, 0.35);
+            // two staggered dorsal rows of glowing-tipped spikes
+            for (let i = 0; i < 6; i++) {
+                const y = torsoH * (0.18 + i * 0.15);
+                for (const sd of i % 2 === 0 ? [0] : [1, -1]) {
+                    const big = (0.11 - i * 0.008) * H * (sd === 0 ? 1 : 0.7);
+                    shape(ctx, 'spike', s.accent, sd * 0.03 * H * bk, y, -0.1 * H * bk, 0.022 * H * bk, big, 0.04 * H * bk, -0.95, sd * 0.25, { e: 0.35, ec: s.glow, sp: 1.2 });
+                }
             }
         }
-        if (rig.extras.includes('fins')) {
-            box(ctx, col.accent, 0, torsoH * 0.7, -0.09 * H * bk, 0.012 * H, 0.16 * H, 0.05 * H);
-        }
+        if (rig.extras.includes('fins'))
+            horn(ctx, s.accent, 0, torsoH * 0.75, -0.08 * H * bk, -2.1, 0, 0.18 * H, 0.02 * H, 3, -0.2, { sp: 1.3 });
         // ---- arms
         for (const side of [1, -1]) {
             const sh = side === 1 ? p.shL : p.shR;
             const sr = side === 1 ? p.shLr : p.shRr;
             const el = side === 1 ? p.elL : p.elR;
             stack.push().translate(side * shoulderX, shoulderY, 0).rotZ(side * sr).rotX(-sh);
-            sphere(ctx, rig.style === 'kaiju' ? col.body : col.accent, 0, 0, 0, 0.056 * H * bk, 0.056 * H * bk, 0.056 * H * bk);
-            if (rig.extras.includes('shoulders') || rig.style === 'kaiju') {
-                cone(ctx, col.accent, side * 0.03 * H, 0.03 * H, 0, 0.018 * H, 0.06 * H, 0, -side * 0.7, 0.3);
+            if (robot) {
+                sphere(ctx, s.joint, 0, 0, 0, 0.05 * H * bk, 0.05 * H * bk, 0.05 * H * bk, { mt: 0.9 });
+                boxR(ctx, s.body, side * 0.02 * H, 0.02 * H, 0, 0, 0, side * -0.2, 0.12 * H * bk, 0.08 * H, 0.12 * H * bk, skin);
+                if (rig.extras.includes('cannons')) {
+                    stack.push().translate(side * 0.03 * H, 0.08 * H, -0.01 * H).rotX(-sh + 1.45);
+                    limb(ctx, s.joint, 0.11 * H, 0.022 * H, 1, { mt: 1 });
+                    stack.pop();
+                }
+                limb(ctx, s.joint, upperArm, 0.035 * H * bk, 1, { mt: 0.9 });
             }
-            limb(ctx, col.limb, upperArm, 0.041 * H * bk, 0.74);
+            else {
+                shape(ctx, kaiju ? 'barrel' : 'dome', kaiju ? s.body : rig.extras.includes('shoulders') ? s.accent : s.body, 0, 0.0, 0, 0.065 * H * bk, 0.06 * H * bk, 0.065 * H * bk, 0, side * -0.15, kaiju ? skin : { sp: 1.3 });
+                if (rig.extras.includes('shoulders'))
+                    boxR(ctx, s.accent, side * 0.035 * H, 0.02 * H, 0, 0, 0, side * -0.5, 0.1 * H * bk, 0.03 * H, 0.11 * H * bk, { sp: 1.4 });
+                if (kaiju)
+                    horn(ctx, s.accent, side * 0.03 * H, 0.04 * H, -0.02 * H, -0.3, side * -0.8, 0.09 * H, 0.022 * H, 2, -0.2, { e: 0.3, ec: s.glow });
+                limb(ctx, kaiju ? s.body : s.limb, upperArm, (kaiju ? 0.055 : 0.043) * H * bk, 0.76, skin);
+            }
             stack.translate(0, -upperArm, 0);
-            sphere(ctx, col.body, 0, 0, 0, 0.034 * H * bk, 0.034 * H * bk, 0.034 * H * bk);
+            sphere(ctx, robot ? s.joint : kaiju ? s.body : s.limb, 0, 0, 0, 0.036 * H * bk, 0.036 * H * bk, 0.036 * H * bk, robot ? { mt: 0.9 } : skin);
             stack.rotX(-el);
-            limb(ctx, col.limb, fore, 0.034 * H * bk, 0.82);
-            if (rig.style === 'speed') {
-                box(ctx, col.accent, side * 0.02 * H, -fore * 0.5, -0.01 * H, 0.008 * H, fore * 0.6, 0.05 * H);
+            if (robot) {
+                limb(ctx, s.joint, fore, 0.032 * H * bk, 1, { mt: 0.9 });
+                box(ctx, s.body, 0, -fore * 0.5, 0, 0.085 * H * bk, fore * 0.85, 0.085 * H * bk, skin);
+            }
+            else {
+                limb(ctx, kaiju ? s.limb : s.limb, fore, (kaiju ? 0.05 : 0.036) * H * bk, 0.8, skin);
+                if (!kaiju && !alien)
+                    shape(ctx, 'bracer', s.accent, 0, -fore * 0.42, 0, 0.039 * H * bk, fore * 0.56, 0.039 * H * bk, 0, 0, { sp: 1.3 });
+                if (style === 'speed' || alien)
+                    horn(ctx, s.accent, side * 0.02 * H, -fore * 0.25, -0.02 * H, -2.6, side * 0.2, 0.1 * H, 0.014 * H, 2, -0.15, alien ? { e: 0.4, ec: s.glow } : undefined);
             }
             stack.translate(0, -fore, 0);
-            sphere(ctx, rig.style === 'kaiju' ? col.body : col.accent, 0, -0.01 * H, 0, 0.044 * H * bk, 0.044 * H * bk, 0.044 * H * bk);
+            drawHands(ctx, s, H, bk, robot ? s.joint : alien ? s.limb : s.fist, kaiju);
             if (side === -1 && rig.extras.includes('sword')) {
-                // Blade along the hand's local +Z: it points forward when the arm hangs, up when the arm is raised
-                // forward and back over the head in a wind-up, so every slice swings it naturally.
-                const blade = [0.9, 0.94, 1];
-                box(ctx, col.accent, 0, -0.01 * H, 0.03 * H, 0.05 * H, 0.014 * H, 0.012 * H); // cross guard
-                box(ctx, blade, 0, -0.01 * H, 0.33 * H, 0.011 * H, 0.03 * H, 0.29 * H, 0.12);
-                box(ctx, col.glow, 0, -0.01 * H + 0.03 * H, 0.33 * H, 0.009 * H, 0.004 * H, 0.29 * H, 1.6); // glowing edges
-                box(ctx, col.glow, 0, -0.01 * H - 0.03 * H, 0.33 * H, 0.009 * H, 0.004 * H, 0.29 * H, 1.6);
-                cone(ctx, blade, 0, -0.01 * H, 0.64 * H, 0.03 * H, 0.05 * H, Math.PI / 2, 0, 0.12);
+                // Blade along the hand's local +Z: it points forward when the arm hangs and swings naturally.
+                const blade = [0.86, 0.9, 0.98];
+                stack.push().translate(0, -0.03 * H, 0);
+                box(ctx, s.accent, 0, 0, 0.03 * H, 0.075 * H, 0.02 * H, 0.022 * H, { sp: 1.4 }); // cross guard
+                sphere(ctx, s.glow, 0, 0, 0.03 * H, 0.014 * H, 0.014 * H, 0.014 * H, { e: 1.8 });
+                box(ctx, blade, 0, 0, 0.34 * H, 0.012 * H, 0.05 * H, 0.58 * H, { mt: 1, sp: 2.2 });
+                box(ctx, s.glow, 0, 0.026 * H, 0.34 * H, 0.008 * H, 0.008 * H, 0.57 * H, { e: 1.8, mt: 0 });
+                box(ctx, s.glow, 0, -0.026 * H, 0.34 * H, 0.008 * H, 0.008 * H, 0.57 * H, { e: 1.8, mt: 0 });
+                shape(ctx, 'spike', blade, 0, 0, 0.62 * H, 0.012 * H, 0.08 * H, 0.03 * H, Math.PI / 2, 0, { mt: 1, sp: 2.2 });
+                box(ctx, shade(s.body, 0.6), 0, 0, -0.04 * H, 0.02 * H, 0.02 * H, 0.08 * H, { mt: 0.2 }); // grip
+                stack.pop();
             }
-            if (rig.style === 'kaiju') {
-                for (const cx of [-1, 0, 1]) {
-                    cone(ctx, [0.95, 0.9, 0.75], cx * 0.022 * H * bk, -0.03 * H, 0.02 * H, 0.011 * H, 0.06 * H, Math.PI, 0);
-                }
+            if (side === 1 && rig.extras.includes('arm-cannon')) {
+                stack.push().translate(0, -0.02 * H, 0.0).rotX(Math.PI / 2);
+                limb(ctx, s.joint, 0.13 * H, 0.03 * H, 1.15, { mt: 1 });
+                sphere(ctx, s.glow, 0, -0.13 * H, 0, 0.022 * H, 0.012 * H, 0.022 * H, { e: 2.2 });
+                stack.pop();
             }
             stack.pop();
         }
-        // ---- head
-        stack.push().translate(0, torsoH + 0.035 * H + headR * 0.7, 0).rotX(p.headTilt).rotY(p.headYaw);
-        sphere(ctx, rig.style === 'kaiju' ? col.body : col.body, 0, 0, 0, headR, headR * 1.12, headR * 1.08);
-        if (rig.style === 'kaiju') {
-            // snout + jaw that opens while charging
-            sphere(ctx, col.body, 0, -headR * 0.15, headR * 0.7, headR * 0.7, headR * 0.5, headR * 0.7);
-            stack.push().translate(0, -headR * 0.5, headR * 0.35).rotX(p.jaw);
-            sphere(ctx, col.limb, 0, -headR * 0.08, headR * 0.4, headR * 0.62, headR * 0.28, headR * 0.72);
-            for (let i = -2; i <= 2; i++)
-                cone(ctx, [0.95, 0.92, 0.8], i * headR * 0.22, headR * 0.1, headR * 0.7, headR * 0.06, headR * 0.2, 0, 0);
-            stack.pop();
-            if (p.jaw > 0.4) {
-                sphere(ctx, col.glow, 0, -headR * 0.45, headR * 0.9, headR * 0.28, headR * 0.2, headR * 0.28, 2.2);
-            }
-        }
-        const eyeOn = dead ? 0.15 : 1;
-        sphere(ctx, [col.eye[0] * eyeOn, col.eye[1] * eyeOn, col.eye[2] * eyeOn], headR * 0.44, headR * 0.12, headR * 0.84, headR * 0.3, headR * 0.15, headR * 0.12, 1.8);
-        sphere(ctx, [col.eye[0] * eyeOn, col.eye[1] * eyeOn, col.eye[2] * eyeOn], -headR * 0.44, headR * 0.12, headR * 0.84, headR * 0.3, headR * 0.15, headR * 0.12, 1.8);
-        if (rig.extras.includes('crest')) {
-            box(ctx, col.accent, 0, headR * 1.05, -headR * 0.1, headR * 0.16, headR * 0.7, headR * 1.5);
-        }
-        if (rig.extras.includes('fins')) {
-            box(ctx, col.accent, 0, headR * 1.0, -headR * 0.3, headR * 0.14, headR * 1.0, headR * 1.3);
-            box(ctx, col.accent, headR * 1.0, headR * 0.1, -headR * 0.1, headR * 0.1, headR * 0.5, headR * 0.7);
-            box(ctx, col.accent, -headR * 1.0, headR * 0.1, -headR * 0.1, headR * 0.1, headR * 0.5, headR * 0.7);
-        }
-        if (rig.extras.includes('horns')) {
-            cone(ctx, [0.92, 0.88, 0.75], headR * 0.55, headR * 0.85, -headR * 0.1, headR * 0.2, headR * 1.1, -0.5, -0.5);
-            cone(ctx, [0.92, 0.88, 0.75], -headR * 0.55, headR * 0.85, -headR * 0.1, headR * 0.2, headR * 1.1, -0.5, 0.5);
-        }
+        // ---- neck + head
+        if (!robot)
+            shape(ctx, 'neck', kaiju ? s.body : s.limb, 0, torsoH + 0.045 * H, kaiju ? 0.02 * H : 0, (kaiju ? 0.07 : 0.042) * H * bk, 0.05 * H, (kaiju ? 0.07 : 0.042) * H * bk, kaiju ? 0.4 : 0, 0, skin);
+        const headY = torsoH + 0.035 * H + headR * (kaiju ? 0.5 : robot ? 0.6 : 0.75);
+        stack.push().translate(0, headY, kaiju ? 0.04 * H : 0).rotX(p.headTilt).rotY(p.headYaw);
+        if (kaiju)
+            drawKaijuHead(ctx, f, rig, s, H, headR, p, dead, time);
+        else if (robot)
+            drawRobotHead(ctx, f, rig, s, H, headR, p, dead, time);
+        else if (alien)
+            drawAlienHead(ctx, f, rig, s, H, headR, p, dead, time);
+        else
+            drawHeroHead(ctx, f, rig, s, H, headR, p, dead, time);
         stack.pop();
         stack.pop(); // torso group
     }
+    /**
+     * Renders a portrait of a character (head and shoulders, or full body) into a 2D canvas, for the select screen.
+     * Uses a neutral studio environment so every fighter is lit the same way.
+     */
+    function renderPortrait(r, def, w, h, full = false) {
+        const H = def.stats.height;
+        const fake = {
+            def, height: H, radius: def.stats.radius, index: 0, state: 'idle', stateTime: 0, flash: 0,
+            x: 0, y: 0, z: 0, px: 0, py: 0, pz: 0, yaw: 0, pyaw: 0, vx: 0, vz: 0, vy: 0, localVx: 0, localVz: 0,
+            walkSpeedFrac: 0, attackTime: 0, attack: null, chargeTime: 0, timerLeft: def.timer ? def.timer.seconds : 0,
+            timerExpired: false, enraged: false,
+        };
+        const anim = new FighterAnimator();
+        anim.update(fake, 1 / 60, 0.6);
+        const env = {
+            skyTop: [0.35, 0.45, 0.65], skyHorizon: [0.85, 0.85, 0.9], fog: [0, 0, 0], fogDensity: 0,
+            sunDir: [-0.45, 0.65, 0.62], sunColor: [1.05, 1, 0.95], skyAmbient: [0.42, 0.46, 0.58], groundAmbient: [0.2, 0.18, 0.2],
+            stars: 0, arenaRadius: 0, theme: 0,
+        };
+        const len = Math.hypot(env.sunDir[0], env.sunDir[1], env.sunDir[2]);
+        env.sunDir = env.sunDir.map((v) => v / len);
+        const kaiju = def.rig.style === 'kaiju';
+        const ty = full ? H * 0.5 : H * (kaiju ? 0.74 : 0.8);
+        const dist = full ? H * 2.3 : H * 0.75;
+        const cam = {
+            eye: [Math.sin(0.45) * dist, ty + (full ? H * 0.1 : H * 0.03), Math.cos(0.45) * dist], target: [0, ty, 0], roll: 0, fov: 0.55,
+        };
+        return r.renderToCanvas(w, h, cam, env, 0.6, () => drawFighter(r, fake, anim, 1, 0.6), true);
+    }
+    exports.renderPortrait = renderPortrait;
 });
 define("render/StageRenderer", ["require", "exports", "data/stages", "math", "render/Renderer"], function (require, exports, stages_js_2, math_js_9, Renderer_js_2) {
     "use strict";
@@ -6407,6 +7594,90 @@ define("render/StageRenderer", ["require", "exports", "data/stages", "math", "re
         setStage(stage, quality) {
             this.stage = stage;
             this.backdrop = (0, stages_js_2.buildBackdrop)(stage, DENSITY[quality]);
+            this.details = quality !== 'low';
+            // Deterministic rooftop details, beacons and neon signs.
+            const rng = new math_js_9.Rng(stage.seed * 13 + 5);
+            const NEON = [[1, 0.25, 0.75], [0.2, 0.9, 1], [0.5, 1, 0.35], [1, 0.6, 0.15], [0.6, 0.4, 1]];
+            for (const b of this.backdrop) {
+                b.roof = rng.next() < 0.75;
+                b.roofW = rng.range(0.35, 0.7);
+                b.roofH = rng.range(1.2, 3.2);
+                b.roofX = rng.range(-0.2, 0.2);
+                b.antenna = b.h > 24 && rng.next() < 0.6;
+                b.antH = rng.range(5, 13);
+                b.tank = !b.antenna && rng.next() < 0.3;
+                b.neon = rng.next() < 0.5;
+                b.neonC = rng.pick(NEON);
+                b.neonY = rng.range(0.35, 0.75);
+                b.neonFace = rng.next() < 0.5 ? 1 : -1;
+                b.phase = rng.range(0, 6.28);
+            }
+        }
+        details = true;
+        /** Rooftop clutter, beacons and neon for one city building (drawn in its local frame). */
+        drawBuildingDetails(b, s, k, alpha, night, time) {
+            const r = this.r;
+            const st = this.stack;
+            if (b.roof) {
+                const m = (0, Renderer_js_2.resetMaterial)(this.mat);
+                m.alpha = alpha;
+                m.color[0] = s.propColor[0] * k * 0.78;
+                m.color[1] = s.propColor[1] * k * 0.78;
+                m.color[2] = s.propColor[2] * k * 0.8;
+                m.rim = 0.2;
+                st.reset().translate(b.x, 0, b.z).rotY(b.rot).translate(b.w * b.roofX, b.h + b.roofH / 2, 0).scale(b.w * b.roofW, b.roofH, b.d * b.roofW);
+                r.draw(r.meshes.cube, st.m, m);
+            }
+            if (alpha < 0.99)
+                return;
+            if (b.tank) {
+                const m = (0, Renderer_js_2.resetMaterial)(this.mat);
+                m.color[0] = 0.42 * k;
+                m.color[1] = 0.36 * k;
+                m.color[2] = 0.3 * k;
+                st.reset().translate(b.x, 0, b.z).rotY(b.rot).translate(-b.w * 0.25, b.h, b.d * 0.2).scale(1.6, 3.2, 1.6);
+                r.draw(r.meshes.beam, st.m, m);
+                st.reset().translate(b.x, 0, b.z).rotY(b.rot).translate(-b.w * 0.25, b.h + 3.2, b.d * 0.2).scale(1.8, 1.2, 1.8);
+                r.draw(r.meshes.cone, st.m, m);
+            }
+            if (b.antenna) {
+                const m = (0, Renderer_js_2.resetMaterial)(this.mat);
+                m.color[0] = m.color[1] = m.color[2] = 0.25;
+                m.spec = 0.6;
+                st.reset().translate(b.x, b.h + b.antH / 2, b.z).scale(0.3, b.antH, 0.3);
+                r.draw(r.meshes.cube, st.m, m);
+                // blinking aviation beacon
+                const on = Math.sin(time * 2.4 + b.phase) > 0.2 ? 1 : 0.12;
+                const g = (0, Renderer_js_2.resetMaterial)(this.mat);
+                g.mode = 3;
+                g.additive = true;
+                g.alpha = (night ? 0.95 : 0.6) * on;
+                g.color[0] = 1;
+                g.color[1] = 0.15;
+                g.color[2] = 0.1;
+                st.reset().translate(b.x, b.h + b.antH + 0.4, b.z).scale(night ? 1.1 : 0.7, night ? 1.1 : 0.7, night ? 1.1 : 0.7);
+                r.draw(r.meshes.sphere, st.m, g);
+            }
+            if (night && b.neon) {
+                const flick = 0.85 + 0.15 * Math.sin(time * 9 + b.phase * 3);
+                const c = b.neonC;
+                const m = (0, Renderer_js_2.resetMaterial)(this.mat);
+                m.mode = 4;
+                m.color[0] = Math.min(1, c[0] * 1.1 * flick);
+                m.color[1] = Math.min(1, c[1] * 1.1 * flick);
+                m.color[2] = Math.min(1, c[2] * 1.1 * flick);
+                st.reset().translate(b.x, 0, b.z).rotY(b.rot).translate(0, b.h * b.neonY, b.neonFace * (b.d / 2 + 0.25)).scale(b.w * 0.55, Math.min(4, b.h * 0.12), 0.3);
+                r.draw(r.meshes.cube, st.m, m);
+                const g = (0, Renderer_js_2.resetMaterial)(this.mat);
+                g.mode = 3;
+                g.additive = true;
+                g.alpha = 0.22 * flick;
+                g.color[0] = c[0];
+                g.color[1] = c[1];
+                g.color[2] = c[2];
+                st.reset().translate(b.x, 0, b.z).rotY(b.rot).translate(0, b.h * b.neonY, b.neonFace * (b.d / 2 + 0.6)).scale(b.w * 0.45, Math.min(4, b.h * 0.12) * 1.6, 1.2);
+                r.draw(r.meshes.sphere, st.m, g);
+            }
         }
         environment() {
             const s = this.stage;
@@ -6518,6 +7789,8 @@ define("render/StageRenderer", ["require", "exports", "data/stages", "math", "re
                     m.rim = 0.3;
                     st.reset().translate(b.x, b.h / 2, b.z).rotY(b.rot).scale(b.w, b.h, b.d);
                     r.draw(r.meshes.cube, st.m, m);
+                    if (this.details)
+                        this.drawBuildingDetails(b, s, k, m.alpha, night, time);
                 }
             }
             // ---- destructible props (staged damage: intact -> cracked/shorter -> rubble)
@@ -6601,6 +7874,9 @@ define("render/VFX", ["require", "exports", "math", "render/Renderer"], function
         beamPower = 0;
         /** Particles drawn last frame (diagnostics). */
         activeCount = 0;
+        /** Stage theme for ambient particles ('volcano' embers, 'night-city' drifting sparks, 'city' dust motes). */
+        ambient = '';
+        ambientAcc = 0;
         constructor() {
             for (let i = 0; i < POOL; i++) {
                 this.parts.push({
@@ -6947,6 +8223,7 @@ define("render/VFX", ["require", "exports", "math", "render/Renderer"], function
                 if (f.on && (f.life -= dt) <= 0)
                     f.on = false;
             this.beamPower = 0;
+            this.emitAmbient(dt);
             if (!battle)
                 return;
             // Continuous emitters: projectile trails, beam impact sparks, charge convergence, clash sparks.
@@ -6993,6 +8270,29 @@ define("render/VFX", ["require", "exports", "math", "render/Renderer"], function
             return this.quality === 'high' ? 1 : this.quality === 'medium' ? 0.6 : 0.35;
         }
         /** Charge-up and rush effects of an ultimate. Each kind of ultimate has its own look. */
+        emitAmbient(dt) {
+            const rate = { volcano: 26, 'night-city': 6, city: 5 }[this.ambient] ?? 0;
+            if (!rate)
+                return;
+            const q = this.quality === 'high' ? 1 : this.quality === 'medium' ? 0.55 : 0.25;
+            this.ambientAcc += dt * rate * q;
+            const rng = this.rng;
+            while (this.ambientAcc > 1) {
+                this.ambientAcc -= 1;
+                const a = rng.range(0, Math.PI * 2);
+                const rr = rng.range(4, 85);
+                const x = Math.cos(a) * rr, z = Math.sin(a) * rr;
+                if (this.ambient === 'volcano') {
+                    this.spawn(4 /* Kind.Ember */, x, rng.range(0.2, 3), z, rng.range(-1.5, 1.5), rng.range(2.5, 6), rng.range(-1.5, 1.5), rng.range(2.5, 5), rng.range(0.12, 0.3), rng.chance(0.3) ? [1, 0.85, 0.4] : [1, 0.42, 0.1], -0.4, 0.4);
+                }
+                else if (this.ambient === 'night-city') {
+                    this.spawn(4 /* Kind.Ember */, x, rng.range(1, 14), z, rng.range(-0.6, 0.6), rng.range(0.2, 1), rng.range(-0.6, 0.6), rng.range(3, 6), rng.range(0.08, 0.16), rng.chance(0.5) ? [0.3, 0.8, 1] : [1, 0.4, 0.9], 0, 0.2);
+                }
+                else {
+                    this.spawn(4 /* Kind.Ember */, x, rng.range(1, 12), z, rng.range(0.5, 1.5), rng.range(-0.1, 0.3), rng.range(-0.4, 0.4), rng.range(3, 6), rng.range(0.07, 0.13), [1, 0.97, 0.85], 0, 0.1);
+                }
+            }
+        }
         emitUltimate(f) {
             const u = f.ultimate;
             const a = f.attack;
@@ -7077,12 +8377,38 @@ define("render/VFX", ["require", "exports", "math", "render/Renderer"], function
                     if (b.drawLength < b.length - 0.5 && !b.clashing) {
                         this.orb(r, b.originX + b.dirX * len, b.originY, b.originZ + b.dirZ * len, w * (0, math_js_10.lerp)(2.4, 0.9, wide) * (0.8 + 0.2 * Math.sin(time * 61)), core, (0, math_js_10.lerp)(0.7, 0.3, wide));
                     }
+                    // spiralling energy rings travelling down the beam
+                    const gap = 6 + b.def.width;
+                    const phase = (time * 30) % gap;
+                    for (let d = phase, i = 0; d < len && i < 16; d += gap, i++) {
+                        const m = (0, Renderer_js_3.resetMaterial)(this.mat);
+                        m.mode = 3;
+                        m.additive = true;
+                        m.alpha = 0.32 * fade * (1 - d / (len + 1) * 0.6);
+                        m.color[0] = b.def.color[0];
+                        m.color[1] = b.def.color[1];
+                        m.color[2] = b.def.color[2];
+                        const rw = w * (1.25 + 0.25 * Math.sin(time * 20 + i));
+                        st.reset().translate(b.originX, b.originY, b.originZ).rotY(b.yaw).rotX(Math.PI / 2).translate(0, d, 0)
+                            .rotY(time * 9 + i).scale(rw, w * 0.5, rw);
+                        r.draw(r.meshes.torus, st.m, m);
+                    }
                     n += 5;
                 }
                 for (const p of battle.projectiles) {
                     this.orb(r, p.x, p.y, p.z, p.radius * 1.8, p.color, 0.5);
                     this.orb(r, p.x, p.y, p.z, p.radius * 0.9, [1, 1, 1], 0.95);
-                    n += 2;
+                    // spinning blade ring
+                    const m = (0, Renderer_js_3.resetMaterial)(this.mat);
+                    m.mode = 3;
+                    m.additive = true;
+                    m.alpha = 0.7;
+                    m.color[0] = p.color[0];
+                    m.color[1] = p.color[1];
+                    m.color[2] = p.color[2];
+                    st.reset().translate(p.x, p.y, p.z).rotY(time * 14).rotZ(0.25).scale(p.radius * 1.5, p.radius * 0.7, p.radius * 1.5);
+                    r.draw(r.meshes.torus, st.m, m);
+                    n += 3;
                 }
                 if (battle.clash) {
                     const c = battle.clash;
@@ -7181,12 +8507,28 @@ define("render/VFX", ["require", "exports", "math", "render/Renderer"], function
                     m.mode = 3;
                     m.additive = true;
                     m.alpha = (0, math_js_10.saturate)(t * 1.6);
-                    st.scale(p.size * (0.5 + t), p.size * (0.5 + t), p.size * (0.5 + t));
+                    const sz = p.size * (0.5 + t);
+                    const sp = Math.hypot(p.vx, p.vy, p.vz);
+                    if (sp > 2) {
+                        // stretch along the direction of travel: reads as a hot streak instead of a dot
+                        st.rotY(Math.atan2(p.vx, p.vz)).rotX(Math.atan2(Math.hypot(p.vx, p.vz), p.vy)).scale(sz * 0.5, sz * (1 + sp * 0.07), sz * 0.5);
+                    }
+                    else {
+                        st.scale(sz, sz, sz);
+                    }
+                    r.draw(r.meshes.sphere, st.m, m);
+                }
+                else if (p.kind === 4 /* Kind.Ember */) {
+                    m.mode = 3;
+                    m.additive = true;
+                    m.alpha = (0, math_js_10.saturate)(t * 2) * (0.55 + 0.45 * Math.sin(this.clock * 14 + p.rot * 5));
+                    st.scale(p.size, p.size, p.size);
                     r.draw(r.meshes.sphere, st.m, m);
                 }
                 else if (p.kind === 2 /* Kind.Debris */) {
+                    m.rim = 0.25;
                     st.rotY(p.rot).rotX(p.rot * 0.7).scale(p.size, p.size * 0.7, p.size);
-                    r.draw(r.meshes.cube, st.m, m);
+                    r.draw(r.meshes.rbox, st.m, m);
                 }
                 else {
                     m.mode = 4;
@@ -7876,8 +9218,14 @@ define("ui/Screens", ["require", "exports", "app/SaveManager", "characters/Chara
         card(def, selected, who) {
             const c = def.rig.colors;
             return `<button class="card ${selected ? 'sel' : ''} ${who}" data-act="pick:${who}:${def.id}" style="--c1:${rgb(c.body)};--c2:${rgb(c.accent)};--c3:${rgb(c.glow)}">
-      <span class="portrait"><b>${esc(def.name[0])}</b><i>placeholder art</i></span>
+      ${this.portraitSpan(def)}
       <span class="cname">${esc(def.name)}</span><span class="ccat">${esc(def.category)}</span></button>`;
+        }
+        portraitSpan(def) {
+            const url = this.cb.portrait ? this.cb.portrait(def.id, false) : null;
+            if (url)
+                return `<span class="portrait img" style="--img:url(${url})"></span>`;
+            return `<span class="portrait"><b>${esc(def.name[0])}</b></span>`;
         }
         statBar(label, v, max) {
             return `<div class="stat"><span>${label}</span><div><i style="width:${Math.min(100, (v / max) * 100)}%"></i></div></div>`;
@@ -7885,7 +9233,9 @@ define("ui/Screens", ["require", "exports", "app/SaveManager", "characters/Chara
         detail(def) {
             const s = def.stats;
             const m = def.moves;
+            const full = this.cb.portrait ? this.cb.portrait(def.id, true) : null;
             return `<div class="detail" style="--c1:${rgb(def.rig.colors.body)};--c3:${rgb(def.rig.colors.glow)}">
+      ${full ? `<img class="hero-shot" alt="" src="${full}">` : ''}
       <h3>${esc(def.name)} <small>${esc(def.title)}</small></h3>
       <div class="tags"><span>${esc(def.category)}</span><span>${esc(def.archetype)}</span></div>
       <p>${esc(def.blurb)}</p>
@@ -8823,6 +10173,7 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
                 onlineCreate: (sel) => this.beginOnline(sel, null),
                 onlineJoin: (sel, code) => this.beginOnline(sel, code),
                 onlineCancel: () => this.endOnline(),
+                portrait: (id, full) => this.portrait(id, full),
             });
             this.input.onPause = () => this.togglePause();
             this.input.onPadDisconnected = () => {
@@ -8879,6 +10230,8 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
             const stage = this.match?.cfg.stage ?? this.preview?.stage;
             if (stage)
                 this.stageRenderer.setStage(stage, q);
+                if (this.vfx)
+                    this.vfx.ambient = stage.theme;
         }
         updateBodyClasses() {
             const b = document.body.classList;
@@ -8910,6 +10263,8 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
             this.preview = new Battle_js_2.Battle([CharacterRegistry_js_3.registry.get(a), CharacterRegistry_js_3.registry.get(b)], stage);
             this.preview.controlsEnabled = false;
             this.stageRenderer.setStage(stage, this.quality);
+            if (this.vfx)
+                this.vfx.ambient = stage.theme;
             this.animators = [new FighterModel_js_1.FighterAnimator(), new FighterModel_js_1.FighterAnimator()];
             this.camera.setMode('orbit');
         }
@@ -8945,6 +10300,8 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
             this.vfx.clear();
             this.hud.reset();
             this.stageRenderer.setStage(stage, this.quality);
+            if (this.vfx)
+                this.vfx.ambient = stage.theme;
             this.camera.setMode('intro');
             this.resultShown = false;
             this.acc = 0;
@@ -9095,6 +10452,8 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
             this.vfx.clear();
             this.hud.reset();
             this.stageRenderer.setStage(match.cfg.stage, this.quality);
+            if (this.vfx)
+                this.vfx.ambient = match.cfg.stage.theme;
             this.camera.setMode('intro');
             this.resultShown = false;
             this.acc = 0;
@@ -9525,6 +10884,28 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
                 b.events.length = 0;
             }
         }
+        portraits = new Map();
+        /** Rendered character portrait as a data URL (cached). null if rendering is unavailable. */
+        portrait(id, full = false) {
+            const key = `${id}:${full ? 'f' : 'h'}`;
+            if (this.portraits.has(key))
+                return this.portraits.get(key);
+            let url = null;
+            try {
+                if (!this.renderer.contextLost) {
+                    const def = CharacterRegistry_js_3.registry.get(id);
+                    const c = full
+                        ? (0, FighterModel_js_1.renderPortrait)(this.renderer, def, 360, 480, true)
+                        : (0, FighterModel_js_1.renderPortrait)(this.renderer, def, 256, 192, false);
+                    url = c.toDataURL('image/png');
+                }
+            }
+            catch (e) {
+                console.warn('Portrait render failed', e);
+            }
+            this.portraits.set(key, url);
+            return url;
+        }
         render(dt) {
             if (this.renderer.contextLost)
                 return;
@@ -9533,13 +10914,22 @@ define("app/Game", ["require", "exports", "ai/CharacterAI", "audio/AudioManager"
                 return;
             const alpha = this.state === 'battle' ? this.acc / exports.STEP : 1;
             this.camera.update(dt, battle, this.renderer.aspect, this.time);
-            this.renderer.beginFrame(this.camera.state, this.stageRenderer.environment(), this.time);
-            this.stageRenderer.draw(battle, this.time, this.camera.state.eye, this.camera.state.target);
-            for (let i = 0; i < 2; i++) {
-                const f = battle.fighters[i];
-                this.animators[i].update(f, this.state === 'paused' ? 0 : this.simDt, this.time);
-                (0, FighterModel_js_1.drawFighter)(this.renderer, f, this.animators[i], alpha, this.time);
+            const env = this.stageRenderer.environment();
+            for (let i = 0; i < 2; i++)
+                this.animators[i].update(battle.fighters[i], this.state === 'paused' ? 0 : this.simDt, this.time);
+            // Sun shadow map: centred between the fighters, sized to cover both plus their reach.
+            const fa = battle.fighters[0], fb = battle.fighters[1];
+            const cx = (fa.x + fb.x) / 2, cz = (fa.z + fb.z) / 2;
+            const span = Math.hypot(fa.x - fb.x, fa.z - fb.z) / 2 + 26;
+            if (this.renderer.beginShadowPass(env, cx, cz, span)) {
+                for (let i = 0; i < 2; i++)
+                    (0, FighterModel_js_1.drawFighter)(this.renderer, battle.fighters[i], this.animators[i], alpha, this.time);
+                this.renderer.endShadowPass();
             }
+            this.renderer.beginFrame(this.camera.state, env, this.time);
+            this.stageRenderer.draw(battle, this.time, this.camera.state.eye, this.camera.state.target);
+            for (let i = 0; i < 2; i++)
+                (0, FighterModel_js_1.drawFighter)(this.renderer, battle.fighters[i], this.animators[i], alpha, this.time);
             this.vfx.draw(this.renderer, battle, this.time);
         }
         /** In "auto" quality, step down once if the device consistently cannot keep up. Never steps back up. */
