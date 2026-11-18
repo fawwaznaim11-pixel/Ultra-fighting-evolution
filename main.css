@@ -251,7 +251,16 @@ body.touch-ui #hud-practice { bottom: auto; top: calc(var(--sa-t) + 66px); font-
   height: 56px; display: flex; align-items: center; justify-content: center; position: relative; border-radius: 3px;
   background: radial-gradient(circle at 50% 35%, var(--c3, #345), var(--c1, #123) 70%);
 }
+.card .portrait.img { height: 78px; background-size: cover, cover; background-position: center 30%, center; background-repeat: no-repeat;
+  background-image: var(--img), radial-gradient(circle at 50% 40%, var(--c3, #345), var(--c1, #123) 75%); }
+.card .portrait.img { background-color: #0b1224; }
+.card:hover .portrait.img, .card.sel .portrait.img { filter: brightness(1.15) saturate(1.1); }
 .card .portrait b { font-size: 34px; text-shadow: 0 2px 6px #000; }
+.detail { position: relative; overflow: hidden; }
+.detail .hero-shot { position: absolute; right: -18px; top: 6px; height: 92%; max-height: 330px; opacity: 0.95; pointer-events: none;
+  filter: drop-shadow(0 0 18px var(--c3, #4cf)); z-index: 0; }
+.detail > *:not(.hero-shot) { position: relative; z-index: 1; }
+.detail p, .detail .moves, .detail .stat { max-width: 62%; }
 .card .portrait i { position: absolute; bottom: 1px; right: 3px; font-size: 8px; opacity: 0.7; font-style: normal; }
 .cname { font-weight: 800; font-size: 13px; letter-spacing: 0.06em; }
 .ccat { font-size: 10px; color: var(--dim); }
@@ -404,7 +413,9 @@ kbd { background: rgba(255, 255, 255, 0.12); border: 1px solid var(--line); bord
   .menu .btn.big { width: calc(50% - 6px); }
   .menu .row { width: 100%; }
   .card { min-height: 84px; }
-  .card .portrait { height: 40px; }
+  .card .portrait, .card .portrait.img { height: 48px; }
+  .detail .hero-shot { display: none; }
+  .detail p, .detail .moves, .detail .stat { max-width: none; }
   .detail p { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
